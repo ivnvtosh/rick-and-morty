@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		8520C9F629225F6000401008 /* MainCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8520C9F529225F6000401008 /* MainCell.swift */; };
+		85845B932993FA3F007306C8 /* StartModuleBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85845B8E2993FA3F007306C8 /* StartModuleBuilder.swift */; };
+		85845B942993FA3F007306C8 /* StartPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85845B8F2993FA3F007306C8 /* StartPresenter.swift */; };
+		85845B952993FA3F007306C8 /* StartRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85845B902993FA3F007306C8 /* StartRouter.swift */; };
+		85845B962993FA3F007306C8 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85845B912993FA3F007306C8 /* StartViewController.swift */; };
+		85845B972993FA3F007306C8 /* StartInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85845B922993FA3F007306C8 /* StartInteractor.swift */; };
 		85B4D26D29205F4E00EF3AB4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B4D26C29205F4E00EF3AB4 /* AppDelegate.swift */; };
 		85B4D26F29205F4E00EF3AB4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B4D26E29205F4E00EF3AB4 /* SceneDelegate.swift */; };
 		85B4D27629205F4F00EF3AB4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85B4D27529205F4F00EF3AB4 /* Assets.xcassets */; };
@@ -25,6 +30,11 @@
 
 /* Begin PBXFileReference section */
 		8520C9F529225F6000401008 /* MainCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCell.swift; sourceTree = "<group>"; };
+		85845B8E2993FA3F007306C8 /* StartModuleBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartModuleBuilder.swift; sourceTree = "<group>"; };
+		85845B8F2993FA3F007306C8 /* StartPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartPresenter.swift; sourceTree = "<group>"; };
+		85845B902993FA3F007306C8 /* StartRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRouter.swift; sourceTree = "<group>"; };
+		85845B912993FA3F007306C8 /* StartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
+		85845B922993FA3F007306C8 /* StartInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartInteractor.swift; sourceTree = "<group>"; };
 		85B4D26929205F4E00EF3AB4 /* Rick and Morty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Rick and Morty.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85B4D26C29205F4E00EF3AB4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85B4D26E29205F4E00EF3AB4 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -53,6 +63,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		85845B982993FA57007306C8 /* Start */ = {
+			isa = PBXGroup;
+			children = (
+				85845B8E2993FA3F007306C8 /* StartModuleBuilder.swift */,
+				85845B8F2993FA3F007306C8 /* StartPresenter.swift */,
+				85845B902993FA3F007306C8 /* StartRouter.swift */,
+				85845B912993FA3F007306C8 /* StartViewController.swift */,
+				85845B922993FA3F007306C8 /* StartInteractor.swift */,
+			);
+			path = Start;
+			sourceTree = "<group>";
+		};
 		85B4D26029205F4E00EF3AB4 = {
 			isa = PBXGroup;
 			children = (
@@ -72,6 +94,7 @@
 		85B4D26B29205F4E00EF3AB4 /* Rick and Morty */ = {
 			isa = PBXGroup;
 			children = (
+				85845B982993FA57007306C8 /* Start */,
 				85EEF09829212142001C93F8 /* Main */,
 				85EEF099292121B3001C93F8 /* API */,
 				85EEF08D29212127001C93F8 /* Application */,
@@ -194,17 +217,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				8520C9F629225F6000401008 /* MainCell.swift in Sources */,
+				85845B962993FA3F007306C8 /* StartViewController.swift in Sources */,
 				85EEF09D2921227E001C93F8 /* Model.swift in Sources */,
+				85845B932993FA3F007306C8 /* StartModuleBuilder.swift in Sources */,
+				85845B942993FA3F007306C8 /* StartPresenter.swift in Sources */,
 				85EEF0952921213F001C93F8 /* MainRouter.swift in Sources */,
 				85EEF09B292121C5001C93F8 /* Service.swift in Sources */,
 				85FFB47A2929C4F80018E986 /* MainFilterCell.swift in Sources */,
 				85B4D26D29205F4E00EF3AB4 /* AppDelegate.swift in Sources */,
 				85B7CC012928EB7F00FE4232 /* MainHeader.swift in Sources */,
 				85EEF0932921213F001C93F8 /* MainModuleBuilder.swift in Sources */,
+				85845B952993FA3F007306C8 /* StartRouter.swift in Sources */,
 				85EEF0962921213F001C93F8 /* MainViewController.swift in Sources */,
 				85B4D26F29205F4E00EF3AB4 /* SceneDelegate.swift in Sources */,
 				85EEF0972921213F001C93F8 /* MainInteractor.swift in Sources */,
 				85EEF0942921213F001C93F8 /* MainPresenter.swift in Sources */,
+				85845B972993FA3F007306C8 /* StartInteractor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
