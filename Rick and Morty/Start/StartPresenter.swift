@@ -6,7 +6,7 @@
 //
 
 protocol StartPresenterProtocol: AnyObject {
-	
+	func buttonAction()
 }
 
 class StartPresenter {
@@ -21,6 +21,8 @@ class StartPresenter {
 }
 
 extension StartPresenter: StartPresenterProtocol {
-	
+	func buttonAction() {
+		router.OpenMainScrean()
+	}
 }
 
