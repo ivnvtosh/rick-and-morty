@@ -8,6 +8,8 @@
 protocol MainPresenterProtocol: AnyObject {
 	func viewDidLoaded()
 	func viewDidLoad(with result: Result<RMCharacterInfoModel, Error>)
+	
+	func didSelectItemAt(character: RMCharacterModel)
 }
 
 class MainPresenter {
@@ -35,6 +37,10 @@ extension MainPresenter: MainPresenterProtocol {
 		case .failure(let error):
 			view?.show(error: error)
 		}
+	}
+	
+	func didSelectItemAt(character: RMCharacterModel) {
+		router.show(character: character)
 	}
 }
 

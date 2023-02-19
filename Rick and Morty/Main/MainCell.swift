@@ -7,6 +7,7 @@
 
 import UIKit
 
+// FIXME: Cache
 class Cache {
 	static let imageCache = NSCache<NSString, UIImage>()
 }
@@ -158,7 +159,6 @@ class CollectionViewCell: UICollectionViewCell {
 	}
 
 	public func show(character: RMCharacterModel) {
-
 		nameLabel.text = character.name
 		descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
 

@@ -17,15 +17,17 @@ class MainViewController: UIViewController {
 
 	var characters = [RMCharacterModel]()
 
+	let transition = MainAnimator()
+
+
 	lazy var collectionView: UICollectionView = {
 		let layout = UICollectionViewFlowLayout()
 		layout.scrollDirection = .vertical
-		layout.sectionInset = UIEdgeInsets(top: 40, left: 20, bottom: 0, right: 20)
-		layout.headerReferenceSize = CGSize(width: view.bounds.width, height: 200)
+		layout.sectionInset = UIEdgeInsets(top: 40, left: 0, bottom: 40, right: 0)
+		layout.minimumLineSpacing = 40
 
-		let frame = view.frame
-		let length = CGFloat.minimum(frame.width, frame.height) / 2 - 25
-		layout.itemSize = CGSize(width: length, height: length * 1.5)
+		let length = view.frame.width - 80
+		layout.itemSize = CGSize(width: length, height: length)
 
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 		collectionView.delegate = self
@@ -33,35 +35,17 @@ class MainViewController: UIViewController {
 		collectionView.backgroundColor = UIColor(named: "ColorDeafult")
 
 		collectionView.register(
-			HeaderCollectionReusableView.self,
-			forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-			withReuseIdentifier: HeaderCollectionReusableView.identifier
-		)
-
-		collectionView.register(
 			CollectionViewCell.self,
 			forCellWithReuseIdentifier: CollectionViewCell.identifier
 		)
 
 		view.addSubview(collectionView)
-
-		let refreshControl = UIRefreshControl()
-		refreshControl.tintColor = .systemPink
-		refreshControl.backgroundColor = .white
-		refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
-		
-		collectionView.addSubview(refreshControl)
 		return collectionView
 	}()
-	
-	@objc func refresh(_ sender: AnyObject) {
-		print("Refreshed!")
-	}
 
     // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
 		presenter?.viewDidLoaded()
     }
 
@@ -69,8 +53,11 @@ class MainViewController: UIViewController {
 		let frame = view.bounds
 		collectionView.frame = frame
 	}
+	
+	let interactionControllerForDismissal = SwipeDownToDismissInteractiveTransition()
 }
 
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		return characters.count
@@ -84,13 +71,14 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 		return cell
 	}
 
-	func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-		guard let header = collectionView.dequeueReusableSupplementaryView(
-			ofKind: UICollectionView.elementKindSectionHeader,
-			withReuseIdentifier: HeaderCollectionReusableView.identifier,
-			for: indexPath
-		) as? HeaderCollectionReusableView else { return UICollectionReusableView() }
-		return header
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		guard let selectedCell = collectionView.cellForItem(at: indexPath) as? CollectionViewCell,
+			  let selectedCellSuperview = selectedCell.superview
+			else {
+			return
+		}
+		transition.originFrame = selectedCellSuperview.convert(selectedCell.frame, to: nil)
+		presenter?.didSelectItemAt(character: characters[indexPath.item])
 	}
 
 	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -100,6 +88,30 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 	}
 }
 
+class SwipeDownToDismissInteractiveTransition: UIPercentDrivenInteractiveTransition {
+	var hasStarted = false
+	var shouldFinish = false
+}
+
+// MARK: - UIViewControllerTransitioningDelegate
+extension MainViewController: UIViewControllerTransitioningDelegate {
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		transition.isPresented = true
+		return transition
+	}
+
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		transition.isPresented = false
+		return transition
+	}
+	
+	func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning)
+		-> UIViewControllerInteractiveTransitioning? {
+		return interactionControllerForDismissal.hasStarted ? interactionControllerForDismissal : nil
+	}
+}
+
+// MARK: - MainViewProtocol
 extension MainViewController: MainViewProtocol {
 	func show(error: Error) {
 		let alertController = UIAlertController(
