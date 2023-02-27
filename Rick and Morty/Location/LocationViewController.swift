@@ -1,21 +1,21 @@
 //
-//  MainViewController.swift
+//  LocationViewController.swift
 //  Super easy dev
 //
-//  Created by Anton Ivanov on 13.11.2022
+//  Created by Anton Ivanov on 27.02.2023
 //
 
 import UIKit
 
-protocol MainViewProtocol: AnyObject {
-	func show(characters: [RMCharacterModel])
+protocol LocationViewProtocol: AnyObject {
+	func show(locations: [RMLocationModel])
 	func show(error: Error)
 }
 
-class MainViewController: UIViewController {
-    var presenter: MainPresenterProtocol?
+class LocationViewController: UIViewController {
+    var presenter: LocationPresenterProtocol?
 
-	var characters = [RMCharacterModel]()
+	var locations = [RMLocationModel]()
 
 
 	lazy var collectionView: UICollectionView = {
@@ -33,8 +33,8 @@ class MainViewController: UIViewController {
 		collectionView.backgroundColor = UIColor(named: "ColorDeafult")
 
 		collectionView.register(
-			MainCollectionViewCell.self,
-			forCellWithReuseIdentifier: MainCollectionViewCell.identifier
+			LocationCollectionViewCell.self,
+			forCellWithReuseIdentifier: LocationCollectionViewCell.identifier
 		)
 
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -43,7 +43,6 @@ class MainViewController: UIViewController {
 	}()
 
     // MARK: - View lifecycle
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -70,36 +69,27 @@ class MainViewController: UIViewController {
 
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 
-extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension LocationViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return characters.count
+		return locations.count
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.identifier, for: indexPath) as? MainCollectionViewCell else {
+		guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LocationCollectionViewCell.identifier, for: indexPath) as? LocationCollectionViewCell else {
 			return UICollectionViewCell()
 		}
-		cell.show(character: characters[indexPath.item])
+		cell.show(locations: locations[indexPath.item])
 		return cell
 	}
 
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		guard let selectedCell = collectionView.cellForItem(at: indexPath) as? MainCollectionViewCell,
-			  let selectedCellSuperview = selectedCell.superview else { return }
-		let originFrame = selectedCellSuperview.convert(selectedCell.frame, to: nil)
-		presenter?.didSelectItemAt(character: characters[indexPath.item], originFrame: originFrame)
-	}
-
 	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-		if indexPath.last == characters.count - 1 {
+		if indexPath.last == locations.count - 1 {
 			presenter?.viewDidLoaded()
 		}
 	}
 }
 
-// MARK: - MainViewProtocol
-
-extension MainViewController: MainViewProtocol {
+extension LocationViewController: LocationViewProtocol {
 	func show(error: Error) {
 		let alertController = UIAlertController(
 			title: "Error",
@@ -122,9 +112,9 @@ extension MainViewController: MainViewProtocol {
 		}
 	}
 
-	func show(characters: [RMCharacterModel]) {
+	func show(locations: [RMLocationModel]) {
 		DispatchQueue.main.async {
-			self.characters += characters
+			self.locations += locations
 			self.collectionView.reloadData()
 		}
 	}

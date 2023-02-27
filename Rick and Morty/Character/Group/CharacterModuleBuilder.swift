@@ -19,8 +19,8 @@ class CharacterModuleBuilder {
 		interactor.presenter = presenter
 		router.viewController = viewController
 
-		viewController.show(character: character) // TODO: ???
-		
+		viewController.show(character: character)
+
 		return viewController
 	}
 }

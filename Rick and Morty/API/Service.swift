@@ -116,6 +116,8 @@ class RMClient {
 		dataTask(with: request, completion: completion)
 	}
 
+	// MARK: - Characters
+
 	public func getCharacters(completion: @escaping (Result<RMCharacterInfoModel, Error>) -> Void) {
 		dataTask(type: .character, completion: completion)
 	}
@@ -125,6 +127,26 @@ class RMClient {
 		dataTask(with: url, completion: completion)
 	}
 
+	// MARK: - Locations
 
+	public func getLocations(completion: @escaping (Result<RMLocationInfoModel, Error>) -> Void) {
+		dataTask(type: .location, completion: completion)
+	}
+
+	public func getLocations(page: String, completion: @escaping (Result<RMLocationInfoModel, Error>) -> Void) {
+		guard let url = URL(string: page) else { return }
+		dataTask(with: url, completion: completion)
+	}
+
+	// MARK: - Episodes
+
+	public func getEpisodes(completion: @escaping (Result<RMEpisodeInfoModel, Error>) -> Void) {
+		dataTask(type: .episode, completion: completion)
+	}
+
+	public func getEpisodes(page: String, completion: @escaping (Result<RMEpisodeInfoModel, Error>) -> Void) {
+		guard let url = URL(string: page) else { return }
+		dataTask(with: url, completion: completion)
+	}
 }
 

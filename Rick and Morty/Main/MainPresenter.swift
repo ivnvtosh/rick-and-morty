@@ -5,11 +5,13 @@
 //  Created by Anton Ivanov on 13.11.2022
 //
 
+import UIKit
+
 protocol MainPresenterProtocol: AnyObject {
 	func viewDidLoaded()
 	func viewDidLoad(with result: Result<RMCharacterInfoModel, Error>)
-	
-	func didSelectItemAt(character: RMCharacterModel)
+
+	func didSelectItemAt(character: RMCharacterModel, originFrame: CGRect)
 }
 
 class MainPresenter {
@@ -38,9 +40,9 @@ extension MainPresenter: MainPresenterProtocol {
 			view?.show(error: error)
 		}
 	}
-	
-	func didSelectItemAt(character: RMCharacterModel) {
-		router.show(character: character)
+
+	func didSelectItemAt(character: RMCharacterModel, originFrame: CGRect) {
+		router.show(character: character, originFrame: originFrame)
 	}
 }
 

@@ -2,27 +2,28 @@
 //  CharacterAnimator.swift
 //  Rick and Morty
 //
-//  Created by Anton Ivanov on 17.02.2023.
+//  Created by Anton Ivanov on 25.02.2023.
 //
 
 import UIKit
 
-class MainAnimator: NSObject, UIViewControllerTransitioningDelegate, UIViewControllerAnimatedTransitioning {
-	let duration = 0.3
+class CharacterAnimator: NSObject, TransitionAnimation {
+	var interactionController: UIViewControllerInteractiveTransitioning?
 	
-	var isPresented = true
-	var originFrame = CGRect.zero
-	var dismissCompletion: (() -> Void)?
+	let duration: TimeInterval = 0.3
+	var originFrame: CGRect = .zero
+	let isPresented: Bool
+	
+	init(originFrame: CGRect, isPresented: Bool) {
+		self.originFrame = originFrame
+		self.isPresented = isPresented
+	}
 	
 	func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-		return duration
+		duration
 	}
 	
 	func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-		if !self.isPresented {
-			self.dismissCompletion?()
-		}
-		
 		let toView = transitionContext.view(forKey: .to)!
 		let fromView = isPresented ? toView : transitionContext.view(forKey: .from)!
 		
@@ -52,13 +53,17 @@ class MainAnimator: NSObject, UIViewControllerTransitioningDelegate, UIViewContr
 		
 		UIView.animate(
 			withDuration: duration,
-			animations: {
-				fromView.transform = self.isPresented ? .identity : scaleTransform
+			animations: { [self] in				
+				fromView.transform = isPresented ? .identity : scaleTransform
 				fromView.center = CGPoint(x: finalFrame.midX, y: finalFrame.midY)
-				fromView.layer.cornerRadius = !self.isPresented ? 20.0 : 0.0
+				fromView.layer.cornerRadius = !isPresented ? 20.0 : 0.0
 			},
 			completion: { _ in
 				transitionContext.completeTransition(true)
-			})
+			}
+		)
+		
+		
 	}
 }
+

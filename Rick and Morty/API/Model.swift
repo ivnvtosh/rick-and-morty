@@ -76,3 +76,47 @@ enum RMCharacterStatusModel: String, Codable {
 	case none = ""
 }
 
+// MARK: - RMLocationInfoModel
+struct RMLocationInfoModel: Codable {
+	let info: RMInfoModel?
+	let results: [RMLocationModel]?
+}
+
+// MARK: - RMLocationModel
+struct RMLocationModel: Codable {
+	let id: Int?
+	let name: String?
+	let type: String?
+	let dimension: String?
+	let residents: [String?]
+	let url: String?
+	let created: String?
+}
+
+// MARK: - RMEpisodeInfoModel
+struct RMEpisodeInfoModel: Codable {
+	let info: RMInfoModel?
+	let results: [RMEpisodeModel]?
+}
+
+// MARK: - RMEpisodeModel
+struct RMEpisodeModel: Codable {
+	let id: Int?
+	let name: String?
+	let airDate: String?
+	let episode: String?
+	let characters: [String?]
+	let url: String?
+	let created: String?
+
+	enum CodingKeys: String, CodingKey {
+		case id
+		case name
+		case airDate = "air_date"
+		case episode
+		case characters
+		case url
+		case created
+	}
+}
+
