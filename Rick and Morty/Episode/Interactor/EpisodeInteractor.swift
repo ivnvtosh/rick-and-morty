@@ -1,31 +1,31 @@
 //
-//  LocationInteractor.swift
+//  EpisodeInteractor.swift
 //  Rick and Morty
 //
 //  Created by Anton Ivanov on 27.02.2023
 //
 
-protocol LocationInteractorProtocol: AnyObject {
+protocol EpisodeInteractorProtocol: AnyObject {
 	func load()
 
 	var rmInfo: RMInfoModel? { get set }
 }
 
-class LocationInteractor: LocationInteractorProtocol {
-    weak var presenter: LocationPresenterProtocol?
-
+class EpisodeInteractor: EpisodeInteractorProtocol {
+    weak var presenter: EpisodePresenterProtocol?
 
 	let rmClient = RickAndMortyService()
 	var rmInfo: RMInfoModel?
 
+
 	func load() {
 //		if let next = rmInfo?.next {
-//			rmClient.getLocations(page: next) { result in
+//			rmClient.getEpisodes(page: next) { result in
 //				self.presenter?.viewDidLoad(with: result)
 //			}
 //
 //		} else {
-//			rmClient.getLocations { result in
+//			rmClient.getEpisodes { result in
 //				self.presenter?.viewDidLoad(with: result)
 //			}
 //		}

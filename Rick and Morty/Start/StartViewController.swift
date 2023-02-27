@@ -1,6 +1,6 @@
 //
 //  StartViewController.swift
-//  Super easy dev
+//  Rick and Morty
 //
 //  Created by Anton Ivanov on 08.02.2023
 //

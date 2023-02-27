@@ -1,13 +1,13 @@
 //
-//  LocationCollectionViewCell.swift
+//  MainCollectionViewCell.swift
 //  Rick and Morty
 //
-//  Created by Anton Ivanov on 27.02.2023.
+//  Created by Anton Ivanov on 14.11.2022.
 //
 
 import UIKit
 
-class LocationCollectionViewCell: UICollectionViewCell {
+class MainCollectionViewCell: UICollectionViewCell {
 	static let identifier = "CollectionViewCell"
 
 	var imageIdentifier = ""
@@ -26,6 +26,14 @@ class LocationCollectionViewCell: UICollectionViewCell {
 		label.translatesAutoresizingMaskIntoConstraints = false
 		contentView.addSubview(label)
 		return label
+	}()
+
+	lazy var statusImageView: UIImageView = {
+		let imageView = UIImageView()
+		imageView.image = UIImage(systemName: "circle.fill")
+		imageView.tintColor = .gray
+		contentView.addSubview(imageView)
+		return imageView
 	}()
 
 	lazy var descriptionLabel: UILabel = {
@@ -101,54 +109,32 @@ class LocationCollectionViewCell: UICollectionViewCell {
 		imageIdentifier = ""
 	}
 
-	private func show(imageURL: String?) {
-		guard let imageURL else { return }
+	public func show(character: RMCharacterModel) {
+		nameLabel.text = character.name
+		descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
+        
+        if let imageURL = character.image {
+            imageIdentifier = imageURL
+        }
 
-//		if let cachedImage = Cache.imageCache.object(forKey: imageURL as NSString) {
-//			imageView.image = cachedImage
-//			activityIndicatorView.stopAnimating()
-//			activityIndicatorView.isHidden = true
-//			return
-//		}
-
-		guard let url = URL(string: imageURL) else { return }
-		imageIdentifier = imageURL
-
-		DispatchQueue.global().async {
-			do {
-				let data = try Data(contentsOf: url)
-				
-				guard let image = UIImage(data: data) else { return }
-				
-//				Cache.imageCache.setObject(image, forKey: imageURL as NSString)
-				
-				DispatchQueue.main.async { [weak self] in
-					if self?.imageIdentifier == imageURL {
-						self?.imageView.image = image
-						self?.activityIndicatorView.stopAnimating()
-						self?.activityIndicatorView.isHidden = true
-					}
-				}
-			}
-			
-			catch (let error) {
-				print(error.localizedDescription)
-				DispatchQueue.main.async { [weak self] in
-					if self?.imageIdentifier == imageURL {
-						self?.imageView.image = UIImage(systemName: "exclamationmark.triangle.fill")
-						self?.activityIndicatorView.stopAnimating()
-						self?.activityIndicatorView.isHidden = true
-					}
-				}
-			}
+		switch character.status! {
+		case .alive:
+			statusImageView.tintColor = UIColor(named: "RMColorGreen")
+		case .dead:
+			statusImageView.tintColor = UIColor(named: "RMColorRed")
+		case .unknown:
+			statusImageView.tintColor = UIColor(named: "RMColorGray")
+		case .none:
+			statusImageView.tintColor = UIColor(named: "RMColorGray")
 		}
 	}
-
-	public func show(locations: RMLocationModel) {
-		nameLabel.text = locations.name
-//		descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
-
-//		show(imageURL: episodes.image)
-	}
+    
+    public func show(image: UIImage) {
+        DispatchQueue.main.async { [weak self] in
+            self?.activityIndicatorView.stopAnimating()
+            self?.activityIndicatorView.isHidden = true
+            self?.imageView.image = image
+        }
+    }
 }
 

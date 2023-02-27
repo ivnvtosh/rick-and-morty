@@ -1,5 +1,5 @@
 //
-//  LocationViewController.swift
+//  EpisodeViewController.swift
 //  Rick and Morty
 //
 //  Created by Anton Ivanov on 27.02.2023
@@ -7,15 +7,15 @@
 
 import UIKit
 
-protocol LocationViewProtocol: AnyObject {
-	func show(locations: [RMLocationModel])
+protocol EpisodeViewProtocol: AnyObject {
+	func show(episodes: [RMEpisodeModel])
 	func show(error: Error)
 }
 
-class LocationViewController: UIViewController {
-    var presenter: LocationPresenterProtocol?
+class EpisodeViewController: UIViewController {
+    var presenter: EpisodePresenterProtocol?
 
-	var locations = [RMLocationModel]()
+	var episodes = [RMEpisodeModel]()
 
 
 	lazy var collectionView: UICollectionView = {
@@ -33,8 +33,8 @@ class LocationViewController: UIViewController {
 		collectionView.backgroundColor = UIColor(named: "ColorDeafult")
 
 		collectionView.register(
-			LocationCollectionViewCell.self,
-			forCellWithReuseIdentifier: LocationCollectionViewCell.identifier
+			EpisodeCollectionViewCell.self,
+			forCellWithReuseIdentifier: EpisodeCollectionViewCell.identifier
 		)
 
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -69,27 +69,27 @@ class LocationViewController: UIViewController {
 
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 
-extension LocationViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension EpisodeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return locations.count
+		return episodes.count
 	}
 
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LocationCollectionViewCell.identifier, for: indexPath) as? LocationCollectionViewCell else {
+		guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EpisodeCollectionViewCell.identifier, for: indexPath) as? EpisodeCollectionViewCell else {
 			return UICollectionViewCell()
 		}
-		cell.show(locations: locations[indexPath.item])
+		cell.show(episodes: episodes[indexPath.item])
 		return cell
 	}
 
 	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-		if indexPath.last == locations.count - 1 {
+		if indexPath.last == episodes.count - 1 {
 			presenter?.viewDidLoaded()
 		}
 	}
 }
 
-extension LocationViewController: LocationViewProtocol {
+extension EpisodeViewController: EpisodeViewProtocol {
 	func show(error: Error) {
 		let alertController = UIAlertController(
 			title: "Error",
@@ -112,9 +112,9 @@ extension LocationViewController: LocationViewProtocol {
 		}
 	}
 
-	func show(locations: [RMLocationModel]) {
+	func show(episodes: [RMEpisodeModel]) {
 		DispatchQueue.main.async {
-			self.locations += locations
+			self.episodes += episodes
 			self.collectionView.reloadData()
 		}
 	}

@@ -1,5 +1,5 @@
 //
-//  LocationCollectionViewCell.swift
+//  EpisodeCollectionViewCell.swift
 //  Rick and Morty
 //
 //  Created by Anton Ivanov on 27.02.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LocationCollectionViewCell: UICollectionViewCell {
+class EpisodeCollectionViewCell: UICollectionViewCell {
 	static let identifier = "CollectionViewCell"
 
 	var imageIdentifier = ""
@@ -144,8 +144,8 @@ class LocationCollectionViewCell: UICollectionViewCell {
 		}
 	}
 
-	public func show(locations: RMLocationModel) {
-		nameLabel.text = locations.name
+	public func show(episodes: RMEpisodeModel) {
+		nameLabel.text = episodes.name
 //		descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
 
 //		show(imageURL: episodes.image)

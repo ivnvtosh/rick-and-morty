@@ -1,6 +1,6 @@
 //
 //  LocationPresenter.swift
-//  Super easy dev
+//  Rick and Morty
 //
 //  Created by Anton Ivanov on 27.02.2023
 //
