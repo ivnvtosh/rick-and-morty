@@ -15,8 +15,7 @@ class ImageService {
     /// Метод, который загружает и кэширует изображение по ссылке
     /// - Parameters:
     ///     - with imageURL String: ссылка на изображение
-    ///     - completion @escaping ((Result<UIImage, Error>) -> Void): замыкание, которое примит ответ - result
-    ///         - Result<UIImage, Error> - в случае успеха - изображение, в случае неудачи - ошибка
+	/// - Returns: Возвращает изображение UIImage
     func load(with imageURL: String) async throws -> UIImage {
         
         let url = URL(string: imageURL)!
