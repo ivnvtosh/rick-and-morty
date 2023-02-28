@@ -12,6 +12,7 @@ enum RickAndMortyError: Error {
 	
 	case invalidBase
 	case invalidPath
+    case invalidURL
 	case canNotOpenURL
 	case noResponse
 	case failedToConvertResponse
@@ -20,6 +21,8 @@ enum RickAndMortyError: Error {
 	case failedToDecode(String)
 }
 
+
+// FIXME: А это так вообще делается?
 /// A type representing one of three possible request options: character, location, episode.
 enum RickAndMortyTypeWithRequest: String {
 	
@@ -28,17 +31,22 @@ enum RickAndMortyTypeWithRequest: String {
 	case episode
 	
 	var base: String {
+        
 		"https://rickandmortyapi.com"
 	}
 	
 	var path: String {
-		"/api/" + self.rawValue
+        
+		"/api/" + rawValue
 	}
 	
 	var method: String {
+        
 		"GET"
 	}
 	
+    /// Клоужер формирует запрос на основании выбраного типа.
+    /// - Returns: Result<URLRequest, Error>
 	var request: Result<URLRequest, Error> {
 		
 		guard let base = URL(string: base) else {
@@ -68,16 +76,16 @@ enum RickAndMortyTypeWithRequest: String {
 	}
 }
 
-/// Это сервис для получения актуальной информации по
-/// персонажам, локациям и эпизодам по мультсериалу "Рик и Морти"
+/// Сервис для получения актуальной информации по
+/// персонажам, локациям и эпизодам по мультсериалу "Рик и Морти".
 class RickAndMortyService {
 	
 	
-	/// Универсальный метод, который по запросу загружает JSON и декодирует его в модель
+	/// Универсальный метод, который по запросу загружает JSON и декодирует его в модель.
 	/// - Parameters:
 	///     - T Decodable: Модель, которая будет получно из JSON
-	///     - with request URLRequest: Сформированный запрос
-	/// - Returns: Возвращает модель
+	///     - with request URLRequest: Сформированный запрос.
+	/// - Returns: Результирующая модель.
 	private func dataTask<T: Decodable>(with request: URLRequest) async throws -> T { // FIXME: where?
 		
 		let (data, response) = try await URLSession.shared.data(for: request)
@@ -93,6 +101,7 @@ class RickAndMortyService {
 		}
 		
 		do {
+            
 			let decoder = JSONDecoder()
 			let object = try decoder.decode(T.self, from: data)
 			
@@ -100,6 +109,7 @@ class RickAndMortyService {
 		}
 		
 		catch {
+            
 			let message = String(data: data, encoding: .utf8) ?? "Unknown encoding"
 			let error = RickAndMortyError.failedToDecode(message)
 			
@@ -107,51 +117,50 @@ class RickAndMortyService {
 		}
 	}
 	
-	/// Универсальный метод, который формирует один из трех возможных вариантов запрос и затем выполяняет его
+	/// Универсальный метод, который формирует один из трех возможных вариантов запрос и затем выполяняет его.
 	/// - Parameters:
 	///     - type RickAndMortyTypeWithRequest: enum, который составляет
-	///       один из трех возможных вариантов запроса: character, location, episode
-	/// - Returns: Возвращает одну из моделей: RMCharacterInfoModel, RMLocationInfoModel, RMEpisodeInfoModel
+	///       один из трех возможных вариантов запроса: character, location, episode.
+	/// - Returns: Возвращает одну из моделей: RMCharacterInfoModel, RMLocationInfoModel, RMEpisodeInfoModel.
 	private func dataTask<T: Decodable>(type: RickAndMortyTypeWithRequest) async throws -> T {
 		
-		let result = type.request
-		switch result {
-			
-		case .success(let request):
-			return try await dataTask(with: request)
-			
-		case .failure(let error):
-			throw error
-		}
-	}
-	
-	/// Универсальный метод, который формирует запроc по готовой ссылке и затем выполяняет его
-	/// - Parameters:
-	///     - with url URL: Ссылка для загрузки
-	/// - Returns: Возвращает модель
-	private func dataTask<T: Decodable>(with url: URL) async throws -> T {
-		
-		let request = URLRequest(url: url)
-		return try await dataTask(with: request)
-	}
+        let result = type.request
+        let request = try result.get()
+        
+        return try await dataTask(with: request)
+    }
+    
+    /// Универсальный метод, который формирует запроc по готовой ссылке и затем выполяняет его.
+    /// - Parameters:
+    ///     - with url URL: Ссылка для загрузки.
+    /// - Returns: Возвращает модель.
+    private func dataTask<T: Decodable>(with url: URL) async throws -> T {
+        
+        let request = URLRequest(url: url)
+        
+        return try await dataTask(with: request)
+    }
+    
+    // MARK: - Characters
 
-	// MARK: - Characters
-
-	/// Метод, который выполняет сетевой запрос, для получения актуальной ифнормации по персонажам
+	/// Метод, который выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
 	/// - Returns: Возвращает модель, которая содержит массив первых десяти персонажей
-	///            и курсор
+	///            и курсор.
 	public func getCharacters() async throws -> RMCharacterInfoModel {
 		
-        return try await dataTask(type: .character)
+        try await dataTask(type: .character)
 	}
 
-	/// Метод, который выполняет сетевой запрос, для получения актуальной ифнормации по персонажам
+	/// Метод выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
 	/// - Returns: Возвращает модель, которая содержит массив `следующих` десяти персонажей
-	///            и информацию о текущем местоположении курсора
-	public func getCharacters(page: String) async throws -> RMCharacterInfoModel {
-		
-//		guard let url = URL(string: page) else { return }
-        let url = URL(string: page)!
+	///            и информацию о текущем местоположении курсора.
+    public func getCharacters(page: String) async throws -> RMCharacterInfoModel {
+        
+        guard let url = URL(string: page) else {
+            
+            throw RickAndMortyError.invalidURL
+        }
+        
         return try await dataTask(with: url)
 	}
 

@@ -26,8 +26,8 @@ class MainViewController: UIViewController {
         layout.itemSize = CGSize(width: length, height: length)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        collectionView.delegate = self       // FIXME: Это нарушает принципы,
+        collectionView.dataSource = self     // поскольку не зря же они разделены
         collectionView.backgroundColor = UIColor(named: "ColorDeafult")
         
         collectionView.register(
@@ -46,17 +46,13 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-		setupView()
 		setupConstraint()
 		presenter?.viewDidLoaded()
     }
 
-	func setupView() {
-		
-	}
-
 	func setupConstraint() { // FIXME: Нужен отступ?
 		NSLayoutConstraint.activate([
+            
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -91,6 +87,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 	}
 
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
 		guard let selectedCell = collectionView.cellForItem(at: indexPath) as? MainCollectionViewCell,
 			  let selectedCellSuperview = selectedCell.superview else {
             return
@@ -112,6 +109,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 // FIXME: Нужен отступ?
 extension MainViewController: MainViewProtocol {
     
+    // FIXME: И как я его сделаю async?
 	func show(error: Error) {
         
 		let alertController = UIAlertController(
@@ -128,18 +126,16 @@ extension MainViewController: MainViewProtocol {
 			}
 		)
 
-		alertController.addAction(alertAction)
-
 		DispatchQueue.main.async { [weak self] in
 			self?.present(alertController, animated: true)
 		}
 	}
-
-	func show(characters: [RMCharacterModel]) {
-		DispatchQueue.main.async { [weak self] in
-			self?.characters += characters
-			self?.collectionView.reloadData()
-		}
-	}
+    
+    @MainActor
+    func show(characters: [RMCharacterModel]) async {
+        
+        self.characters += characters
+        self.collectionView.reloadData()
+    }
 }
 

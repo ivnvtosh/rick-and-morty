@@ -10,8 +10,8 @@ import UIKit
 protocol MainPresenterProtocol: AnyObject {
     
     func viewDidLoaded()
-//    func viewDidLoad(with result: Result<RMCharacterInfoModel, Error>)
     func viewDidLoad(with characters: RMCharacterInfoModel)
+    @MainActor
     func viewDidLoad(with error: Error)
 
     func imageDidLoaded(with url: String?, completion: @escaping ((UIImage) -> Void))

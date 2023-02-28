@@ -8,6 +8,7 @@
 import UIKit
 
 protocol TransitionAnimation: UIViewControllerAnimatedTransitioning {
+    
 	var interactionController: UIViewControllerInteractiveTransitioning? { get }
 }
 

@@ -8,6 +8,7 @@
 import UIKit
 
 protocol MainInteractorProtocol: AnyObject {
+    
     var rmInfo: RMInfoModel? { get set }
 
     func load() async

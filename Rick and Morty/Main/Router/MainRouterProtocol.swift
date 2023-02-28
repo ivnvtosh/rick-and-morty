@@ -8,5 +8,6 @@
 import Foundation
 
 protocol MainRouterProtocol {
+    
     func show(character: RMCharacterModel, originFrame: CGRect)
 }

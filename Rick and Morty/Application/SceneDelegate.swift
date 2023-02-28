@@ -17,33 +17,44 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		// If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
 		// This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
-//		Cache.imageCache.countLimit = 100
-//		Cache.imageCache.totalCostLimit = 50 * 1024 * 1024
-
-		guard let windowScene = (scene as? UIWindowScene) else { return }
-
-		let tabBarController = UITabBarController()
-
-		let episodeViewController = EpisodeModuleBuilder.build()
-		let mainViewController = MainModuleBuilder.build()
-		let locationViewController = LocationModuleBuilder.build()
-
-		episodeViewController.tabBarItem = UITabBarItem(title: "Episodes", image: UIImage(systemName: "folder.circle.fill"), tag: 0)
-		mainViewController.tabBarItem = UITabBarItem(title: "Characters", image: UIImage(systemName: "person.circle.fill"), tag: 1)
-		locationViewController.tabBarItem = UITabBarItem(title: "Locations", image: UIImage(systemName: "map.circle.fill"), tag: 2)
-
-		tabBarController.viewControllers = [
-			episodeViewController,
-			mainViewController,
-			locationViewController
-		]
-
-		tabBarController.selectedViewController = mainViewController
-
-		window = UIWindow(windowScene: windowScene)
+        guard let windowScene = (scene as? UIWindowScene) else {
+            return
+        }
+        
+        let tabBarController = UITabBarController()
+        
+        let episodeViewController = EpisodeModuleBuilder.build()
+        let mainViewController = MainModuleBuilder.build()
+        let locationViewController = LocationModuleBuilder.build()
+        
+        episodeViewController.tabBarItem = UITabBarItem(
+            title: "Episodes",
+            image: UIImage(systemName: "folder.circle.fill"),
+            tag: 0
+        )
+        mainViewController.tabBarItem = UITabBarItem(
+            title: "Characters",
+            image: UIImage(systemName: "person.circle.fill"),
+            tag: 1
+        )
+        locationViewController.tabBarItem = UITabBarItem(
+            title: "Locations",
+            image: UIImage(systemName: "map.circle.fill"),
+            tag: 2
+        )
+        
+        tabBarController.viewControllers = [
+            episodeViewController,
+            mainViewController,
+            locationViewController
+        ]
+        
+        tabBarController.selectedViewController = mainViewController
+        
+        window = UIWindow(windowScene: windowScene)
         window?.rootViewController = tabBarController
-		window?.makeKeyAndVisible()
-	}
+        window?.makeKeyAndVisible()
+    }
 
 	func sceneDidDisconnect(_ scene: UIScene) {
 		// Called as the scene is being released by the system.
