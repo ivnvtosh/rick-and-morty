@@ -7,24 +7,15 @@
 
 import UIKit
 
-/// A type representing an error value that can be thrown.
-enum ImageError: Error {
-    case invalidURL
-}
-
-// FIXME: Каждая сущность должна иметь одну причину для изменений, где сущность это протокол, класс, метод, переменная и т.д.
-// По идее проверка, на то что изображение загружено или нет, должна происходит в презентаре,
-// но тут появляется проблемв с дублированием кода, или это нормальная практика?
-// Хотя нет, интерактор должен ответить на вопрос:
-// Необходимо загрузить из интернета или с устройства?
-// Но как назвать этот объект? ImageCashe?
-
-
-/// Сервис выполянет сетевой запрос для загрузки изображения, а также кэширует его.
+// FIXME: Разбить на 2 класса ImageService и ImageCashe
+/// Сервис выполянет сетевой запрос для загрузки и кэширования изображения.
+/// В случае если изображение уже присутсвует в кэше, то загрузка выпоняться не будет.
 class ImageService {
     
+    // FIXME: Убрать статик
     private static let imageCache = NSCache<NSString, UIImage>()
     
+    // FIXME: rename imageURL (если класс разбить на 2 класса, то эта пробелма пропадет)
     /// Метод загружает и кэширует изображение.
     /// - Parameters:
     ///     - with imageURL String: Cсылка на изображение.
@@ -35,7 +26,8 @@ class ImageService {
             
             throw ImageError.invalidURL
         }
-
+        
+        // FIXME: Код не синхронизирован
         if let cachedImage = ImageService.imageCache.object(forKey: imageURL as NSString) {
             
             return cachedImage
@@ -43,16 +35,32 @@ class ImageService {
         
         do {
             
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let image = UIImage(data: data)!
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let response = response as? HTTPURLResponse else {
+                
+                throw RickAndMortyError.failedToConvertResponse
+            }
+            
+            if response.statusCode != 200 {
+                
+                throw RickAndMortyError.statusCodeIsNot200(response.statusCode)
+            }
+            
+            guard let image = UIImage(data: data) else {
+                
+                throw ImageError.notInitializeImageFromData
+            }
+            
+            // FIXME: Код не синхронизирован
             ImageService.imageCache.setObject(image, forKey: imageURL as NSString)
             
             return image
         }
+        
         catch {
             
             throw error
         }
     }
 }
-

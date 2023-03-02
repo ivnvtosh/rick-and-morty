@@ -9,5 +9,6 @@ import Foundation
 
 protocol MainRouterProtocol {
     
+    // FIXME: rename present(character:) or rename presentCharacter(_:)?
     func show(character: RMCharacterModel, originFrame: CGRect)
 }

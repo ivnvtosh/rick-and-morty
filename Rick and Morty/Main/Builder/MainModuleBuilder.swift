@@ -7,20 +7,23 @@
 
 import UIKit
 
+// FIXME: Использовать паттерн - Builder? думаю, нет // То что у меня это не Builder
+// FIXME: Переименовать на Assembly?
 class MainModuleBuilder {
-	static func build() -> MainViewController {
+    
+    // FIXME: Переименовать?
+    static func build() -> MainViewController {
         
-		let interactor = MainInteractor()
-		let router = MainRouter()
-		let presenter = MainPresenter(interactor: interactor, router: router)
-		let viewController = MainViewController()
-
-		viewController.presenter = presenter
-		presenter.view = viewController
-		interactor.presenter = presenter
-		router.viewController = viewController
-
-		return viewController
-	}
+        let interactor = MainInteractor()
+        let router = MainRouter()
+        let presenter = MainPresenter(interactor: interactor, router: router)
+        let viewController = MainViewController()
+        
+        viewController.presenter = presenter
+        presenter.view = viewController
+        interactor.presenter = presenter
+        router.viewController = viewController
+        
+        return viewController
+    }
 }
-

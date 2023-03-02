@@ -9,14 +9,18 @@ import UIKit
 
 protocol MainPresenterProtocol: AnyObject {
     
-    func viewDidLoaded()
+    func viewDidLoad()
     func viewDidLoad(with characters: RMCharacterInfoModel)
-    @MainActor
+    
     func viewDidLoad(with error: Error)
-
-    func imageDidLoaded(with url: String?, completion: @escaping ((UIImage) -> Void))
-    func imageDidLoad(with result: Result<UIImage, Error>,
-                      completion: @escaping ((UIImage) -> Void))
-
+    
+    // FIXME: Так?
+    func imageDidLoaded(with url: String?,
+                        completion: @escaping ((UIImage) -> Void))
+    // FIXME: Или тик так?
+    func imageDidLoad(
+        with result: Result<UIImage, Error>,
+        completion: @escaping ((UIImage) -> Void))
+    
     func didSelectItemAt(character: RMCharacterModel, originFrame: CGRect)
 }

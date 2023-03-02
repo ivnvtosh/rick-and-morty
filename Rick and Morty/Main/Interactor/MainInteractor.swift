@@ -10,43 +10,51 @@ import UIKit
 class MainInteractor: MainInteractorProtocol {
     
     weak var presenter: MainPresenterProtocol?
-
-	let rmClient = RickAndMortyService()
-	var rmInfo: RMInfoModel?
-
-    let  imageService = ImageService()
-
-
+    
+    // FIXME: rename
+    let rmClient = RickAndMortyService()
+    var rmInfo: RMInfoModel?
+    
+    let imageService = ImageService()
+    
+    
     func load() async {
         
         do {
             
-            if let next = rmInfo?.next {
+            // FIXME: разбить на 2 метода
+            if let nextPage = rmInfo?.next {
                 
-                let сharacters = try await rmClient.getCharacters(page: next)
+                let сharacters = try await rmClient.getCharacters(from: nextPage)
+                
                 rmInfo = сharacters.info
+                
                 self.presenter?.viewDidLoad(with: сharacters)
             }
             
             else {
                 
                 let сharacters = try await rmClient.getCharacters()
+                
                 rmInfo = сharacters.info
+                
+                // FIXME: сharacters.result
                 self.presenter?.viewDidLoad(with: сharacters)
             }
         }
         
         catch {
             
-            await self.presenter?.viewDidLoad(with: error)
+            self.presenter?.viewDidLoad(with: error)
         }
     }
-
+    
     func loadImage(with url: String, completion: @escaping ((UIImage) -> Void)) async {
         
         do {
             
             let image = try await imageService.load(with: url)
+            
             self.presenter?.imageDidLoad(with: .success(image), completion: completion)
         }
         
@@ -56,4 +64,3 @@ class MainInteractor: MainInteractorProtocol {
         }
     }
 }
-

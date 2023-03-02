@@ -7,125 +7,54 @@
 
 import UIKit
 
-/// A type representing an error value that can be thrown.
-enum RickAndMortyError: Error {
-	
-	case invalidBase
-	case invalidPath
-    case invalidURL
-	case canNotOpenURL
-	case noResponse
-	case failedToConvertResponse
-	case statusCodeIsNot200(Int)
-	case noData
-	case failedToDecode(String)
-}
-
-
-// FIXME: А это так вообще делается?
-/// A type representing one of three possible request options: character, location, episode.
-enum RickAndMortyTypeWithRequest: String {
-	
-	case character
-	case location
-	case episode
-	
-	var base: String {
-        
-		"https://rickandmortyapi.com"
-	}
-	
-	var path: String {
-        
-		"/api/" + rawValue
-	}
-	
-	var method: String {
-        
-		"GET"
-	}
-	
-    /// Клоужер формирует запрос на основании выбраного типа.
-    /// - Returns: Result<URLRequest, Error>
-	var request: Result<URLRequest, Error> {
-		
-		guard let base = URL(string: base) else {
-			
-			return .failure(RickAndMortyError.invalidBase)
-		}
-		
-		guard let url = URL(string: path, relativeTo: base) else {
-			
-			return .failure(RickAndMortyError.invalidPath)
-		}
-		
-		guard UIApplication.shared.canOpenURL(url) else {
-			
-			return .failure(RickAndMortyError.canNotOpenURL)
-		}
-		
-		var request = URLRequest(
-			url: url,
-			cachePolicy: .returnCacheDataElseLoad,
-			timeoutInterval: 10
-		)
-		
-		request.httpMethod = method
-		
-		return .success(request)
-	}
-}
-
 /// Сервис для получения актуальной информации по
 /// персонажам, локациям и эпизодам по мультсериалу "Рик и Морти".
 class RickAndMortyService {
-	
-	
-	/// Универсальный метод, который по запросу загружает JSON и декодирует его в модель.
-	/// - Parameters:
-	///     - T Decodable: Модель, которая будет получно из JSON
-	///     - with request URLRequest: Сформированный запрос.
-	/// - Returns: Результирующая модель.
-	private func dataTask<T: Decodable>(with request: URLRequest) async throws -> T { // FIXME: where?
-		
-		let (data, response) = try await URLSession.shared.data(for: request)
-		
-		guard let response = response as? HTTPURLResponse else {
-			
-			throw RickAndMortyError.failedToConvertResponse
-		}
-		
-		if response.statusCode != 200 {
-			
-			throw RickAndMortyError.statusCodeIsNot200(response.statusCode)
-		}
-		
-		do {
+    
+    /// Универсальный метод, который по запросу загружает JSON и декодирует его в модель.
+    /// - Parameters:
+    ///     - T Decodable: Модель, которая будет получна из JSON
+    ///     - with request URLRequest: Сформированный запрос.
+    /// - Returns: Результирующая модель.
+    private func dataTask<T: Decodable>(with request: URLRequest) async throws -> T {
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let response = response as? HTTPURLResponse else {
             
-			let decoder = JSONDecoder()
-			let object = try decoder.decode(T.self, from: data)
-			
-			return object
-		}
-		
-		catch {
+            throw RickAndMortyError.failedToConvertResponse
+        }
+        
+        if response.statusCode != 200 {
             
-			let message = String(data: data, encoding: .utf8) ?? "Unknown encoding"
-			let error = RickAndMortyError.failedToDecode(message)
-			
-			throw error
-		}
-	}
-	
-	/// Универсальный метод, который формирует один из трех возможных вариантов запрос и затем выполяняет его.
-	/// - Parameters:
-	///     - type RickAndMortyTypeWithRequest: enum, который составляет
-	///       один из трех возможных вариантов запроса: character, location, episode.
-	/// - Returns: Возвращает одну из моделей: RMCharacterInfoModel, RMLocationInfoModel, RMEpisodeInfoModel.
-	private func dataTask<T: Decodable>(type: RickAndMortyTypeWithRequest) async throws -> T {
-		
-        let result = type.request
-        let request = try result.get()
+            throw RickAndMortyError.statusCodeIsNot200(response.statusCode)
+        }
+        
+        do {
+            
+            // FIXME: Нужно ли вынести объект декодера в член класса?
+            let decoder = JSONDecoder()
+            let object = try decoder.decode(T.self, from: data)
+            
+            return object
+        }
+        
+        catch {
+            
+            let message = String(data: data, encoding: .utf8) ?? "Unknown encoding"
+            
+            throw RickAndMortyError.failedToDecode(message)
+        }
+    }
+    
+    /// Универсальный метод, который формирует один из трех возможных вариантов запрос и затем выполяняет его.
+    /// - Parameters:
+    ///     - type RickAndMortyTypeWithRequest: enum, который составляет
+    ///       один из трех возможных вариантов запроса: character, location, episode.
+    /// - Returns: Возвращает одну из моделей: RMCharacterInfoModel, RMLocationInfoModel, RMEpisodeInfoModel.
+    private func dataTask<T: Decodable>(type: RickAndMortyTypeWithRequest) async throws -> T {
+        
+        let request = try type.getRequest()
         
         return try await dataTask(with: request)
     }
@@ -142,19 +71,19 @@ class RickAndMortyService {
     }
     
     // MARK: - Characters
-
-	/// Метод, который выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
-	/// - Returns: Возвращает модель, которая содержит массив первых десяти персонажей
-	///            и курсор.
-	public func getCharacters() async throws -> RMCharacterInfoModel {
-		
+    
+    /// Метод, который выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
+    /// - Returns: Возвращает модель, которая содержит массив первых 10 персонажей и курсор.
+    public func getCharacters() async throws -> RMCharacterInfoModel {
+        
         try await dataTask(type: .character)
-	}
-
-	/// Метод выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
-	/// - Returns: Возвращает модель, которая содержит массив `следующих` десяти персонажей
-	///            и информацию о текущем местоположении курсора.
-    public func getCharacters(page: String) async throws -> RMCharacterInfoModel {
+    }
+    
+    /// Метод выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
+    /// - Parameters:
+    ///     - from page String: ссылка на страницу, с которой будут получены данные.
+    /// - Returns: Возвращает модель, которая содержит массив 10 персонажей и курсор, по текущей страницы.
+    public func getCharacters(from page: String) async throws -> RMCharacterInfoModel {
         
         guard let url = URL(string: page) else {
             
@@ -162,7 +91,7 @@ class RickAndMortyService {
         }
         
         return try await dataTask(with: url)
-	}
+    }
 
 //	// MARK: - Locations
 //
@@ -190,4 +119,3 @@ class RickAndMortyService {
 //		dataTask(with: url, completion: completion)
 //	}
 }
-

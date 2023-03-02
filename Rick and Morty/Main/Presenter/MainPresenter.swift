@@ -10,8 +10,11 @@ import UIKit
 class MainPresenter {
     
     weak var view: MainViewProtocol?
+    // FIXME: Тут нужен отступ?
     var router: MainRouterProtocol
+    // FIXME: Тут нужен отступ?
     var interactor: MainInteractorProtocol
+    // FIXME: Тут сделтать двойной отступ. Двойной отступ впринципе делают?
     
     init(interactor: MainInteractorProtocol, router: MainRouterProtocol) {
         
@@ -22,45 +25,55 @@ class MainPresenter {
 
 extension MainPresenter: MainPresenterProtocol {
     
-    func viewDidLoaded() {
+    func viewDidLoad() {
         
         Task {
+            
             await interactor.load()
         }
     }
     
+    // FIXME: как переименовать?
     func viewDidLoad(with characters: RMCharacterInfoModel) {
         
-        guard let results = characters.results else { // FIXME: Пользователь будет в шоке(((
+        // FIXME: Уйдет само
+        guard let results = characters.results else {
+            
             return
         }
-
-        Task {
+        
+        Task { @MainActor in
+            // FIXME: Тут нужен отступ?
             await self.view?.show(characters: results)
         }
     }
     
-    func viewDidLoad(with error: Error) { // FIXME: Нормально?
+    // FIXME: как переименовать?
+    func viewDidLoad(with error: Error) {
         
         view?.show(error: error)
     }
-
-    // FIXME: Стоит ли возращать UIImage опционалным?
+    
     func imageDidLoaded(with url: String?, completion: @escaping ((UIImage) -> Void)) {
+        
         guard let url else {
             
+            // FIXME: Переписать?
             if let image = UIImage(systemName: "externaldrive.trianglebadge.exclamationmark") {
-                completion(image) // FIXME: И что это такое?
+                
+                completion(image)
             }
             
             return
         }
-
-        Task.detached { // FIXME: В какой прослойке необходимо писать TASK?
+        
+        Task {
+            
             await self.interactor.loadImage(with: url, completion: completion)
         }
     }
     
+    // FIXME: Уйдет само
     func imageDidLoad(with result: Result<UIImage, Error>, completion: @escaping ((UIImage) -> Void)) {
         
         switch result {
@@ -70,17 +83,17 @@ extension MainPresenter: MainPresenterProtocol {
             
         case .failure(let error):
             print(error.localizedDescription)
+            
+            // FIXME: Переписать?
             if let image = UIImage(systemName: "externaldrive.trianglebadge.exclamationmark") {
                 
                 completion(image)
             }
         }
     }
-
-	func didSelectItemAt(character: RMCharacterModel, originFrame: CGRect) {
-//
-		router.show(character: character, originFrame: originFrame)
-	}
+    
+    func didSelectItemAt(character: RMCharacterModel, originFrame: CGRect) {
+        
+        router.show(character: character, originFrame: originFrame)
+    }
 }
-
-// FIXME: в конце файла 2 строки?

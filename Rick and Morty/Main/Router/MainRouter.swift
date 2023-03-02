@@ -11,6 +11,7 @@ class MainRouter: MainRouterProtocol {
     
     weak var viewController: MainViewController?
 
+    // FIXME: Убрать
 	let transitioningDelegate = TransitioningDelegate()
 
 
@@ -22,9 +23,7 @@ class MainRouter: MainRouterProtocol {
 		transitioningDelegate.dismissalAnimation = CharacterAnimator(originFrame: originFrame, isPresented: false)
 		characterViewController.transitioningDelegate = transitioningDelegate
         characterViewController.modalPresentationStyle = .fullScreen
-//        characterViewController.modalPresentationStyle = .custom
         
 		viewController?.present(characterViewController, animated: true)
 	}
 }
-

@@ -10,10 +10,11 @@ import UIKit
 class MainViewController: UIViewController {
     
     var presenter: MainPresenterProtocol?
-
-	var characters = [RMCharacterModel]()
-
-
+    
+    // FIXME: Убрать
+    var characters = [RMCharacterModel]()
+    
+    
     lazy var collectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
@@ -26,8 +27,9 @@ class MainViewController: UIViewController {
         layout.itemSize = CGSize(width: length, height: length)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.delegate = self       // FIXME: Это нарушает принципы,
-        collectionView.dataSource = self     // поскольку не зря же они разделены
+        
+        collectionView.delegate = self
+        collectionView.dataSource = self
         collectionView.backgroundColor = UIColor(named: "ColorDeafult")
         
         collectionView.register(
@@ -40,102 +42,106 @@ class MainViewController: UIViewController {
         
         return collectionView
     }()
-
+    
     // MARK: - View lifecycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-		setupConstraint()
-		presenter?.viewDidLoaded()
+        
+        setupConstraint()
+        presenter?.viewDidLoad()
     }
-
-	func setupConstraint() { // FIXME: Нужен отступ?
-		NSLayoutConstraint.activate([
+    
+    func setupConstraint() {
+        
+        NSLayoutConstraint.activate([
             
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
-	}
+    }
 }
-
-// MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
-	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-		characters.count
-	}
-
-	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        characters.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-		guard let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MainCollectionViewCell.identifier,
             for: indexPath) as? MainCollectionViewCell else {
             
-			return UICollectionViewCell()
-		}
-
+            return UICollectionViewCell()
+        }
+        
         let character = characters[indexPath.item]
+        
         cell.show(character: character)
         presenter?.imageDidLoaded(with: character.image, completion: cell.show)
-
-		return cell
-	}
-
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-		guard let selectedCell = collectionView.cellForItem(at: indexPath) as? MainCollectionViewCell,
-			  let selectedCellSuperview = selectedCell.superview else {
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        // FIXME: Если не сработает, то что делать?
+        guard let selectedCell = collectionView.cellForItem(at: indexPath) as? MainCollectionViewCell,
+              let selectedCellSuperview = selectedCell.superview else {
+            // FIXME: Тут нужен отступ?
             return
         }
         
-		let originFrame = selectedCellSuperview.convert(selectedCell.frame, to: nil)
-		presenter?.didSelectItemAt(character: characters[indexPath.item], originFrame: originFrame)
-	}
-
-	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let originFrame = selectedCellSuperview.convert(selectedCell.frame, to: nil)
         
-		if indexPath.last == characters.count - 1 {
-			presenter?.viewDidLoaded()
-		}
-	}
+        presenter?.didSelectItemAt(character: characters[indexPath.item], originFrame: originFrame)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+        if indexPath.last == characters.count - 1 {
+            
+            presenter?.viewDidLoad()
+        }
+    }
 }
 
-// MARK: - MainViewProtocol
-// FIXME: Нужен отступ?
 extension MainViewController: MainViewProtocol {
     
-    // FIXME: И как я его сделаю async?
-	func show(error: Error) {
+    func show(error: Error) {
         
-		let alertController = UIAlertController(
-			title: "Error",
-			message: error.localizedDescription,
-			preferredStyle: .alert
-		)
-
-		let alertAction = UIAlertAction(
-			title: "Try again",
-			style: .default,
-			handler: { [weak self]  _ in
-				self?.presenter?.viewDidLoaded()
-			}
-		)
-
-		DispatchQueue.main.async { [weak self] in
-			self?.present(alertController, animated: true)
-		}
-	}
+        // FIXME: Так?
+        let alertController = UIAlertController(title: "Error",
+                                                message: error.localizedDescription,
+                                                preferredStyle: .alert
+        )
+        
+        // FIXME: Или так?
+        let alertAction = UIAlertAction(
+            title: "Try again",
+            style: .default,
+            handler: { [weak self]  _ in
+                // FIXME: Тут нужен отступ?
+                self?.presenter?.viewDidLoad()
+            }
+        )
+        
+        alertController.addAction(alertAction)
+        
+        Task {
+            
+            self.present(alertController, animated: true)
+        }
+    }
     
-    @MainActor
     func show(characters: [RMCharacterModel]) async {
         
         self.characters += characters
         self.collectionView.reloadData()
     }
 }
-
