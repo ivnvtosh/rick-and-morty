@@ -7,60 +7,47 @@
 
 import UIKit
 
-class MainInteractor: MainInteractorProtocol {
+class MainInteractor {
     
-    weak var presenter: MainPresenterProtocol?
+    weak var presenter: MainPresenterOutput?
     
     // FIXME: rename
     let rmClient = RickAndMortyService()
     var rmInfo: RMInfoModel?
     
     let imageService = ImageService()
-    
-    
-    func load() async {
+}
+
+extension MainInteractor: MainInteractorInput {
+
+    func loadCharacter() async throws -> [CharacterEntity] {
         
-        do {
+        // FIXME: разбить на 2 метода
+        if let nextPage = rmInfo?.next {
             
-            // FIXME: разбить на 2 метода
-            if let nextPage = rmInfo?.next {
-                
-                let сharacters = try await rmClient.getCharacters(from: nextPage)
-                
-                rmInfo = сharacters.info
-                
-                self.presenter?.viewDidLoad(with: сharacters)
-            }
+            let сharacters = try await rmClient.getCharacters(from: nextPage)
             
-            else {
-                
-                let сharacters = try await rmClient.getCharacters()
-                
-                rmInfo = сharacters.info
-                
-                // FIXME: сharacters.result
-                self.presenter?.viewDidLoad(with: сharacters)
-            }
+            rmInfo = сharacters.info
+            
+            return сharacters.results as! [CharacterEntity]
         }
         
-        catch {
+        else {
             
-            self.presenter?.viewDidLoad(with: error)
+            let сharacters = try await rmClient.getCharacters()
+            
+            rmInfo = сharacters.info
+            
+            return сharacters.results as! [CharacterEntity]
         }
     }
     
-    func loadImage(with url: String, completion: @escaping ((UIImage) -> Void)) async {
+    func loadImage(with url: String) async throws -> UIImage {
         
-        do {
-            
-            let image = try await imageService.load(with: url)
-            
-            self.presenter?.imageDidLoad(with: .success(image), completion: completion)
-        }
-        
-        catch {
-            
-            self.presenter?.imageDidLoad(with: .failure(error), completion: completion)
-        }
+        return try await imageService.load(with: url)
     }
+}
+
+extension MainInteractor: MainInteractorOutput {
+    
 }

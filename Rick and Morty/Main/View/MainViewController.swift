@@ -9,10 +9,9 @@ import UIKit
 
 class MainViewController: UIViewController {
     
-    var presenter: MainPresenterProtocol?
+    var presenter: MainPresenterInput?
     
-    // FIXME: Убрать
-    var characters = [RMCharacterModel]()
+    var characters = [CharacterEntity]()
     
     
     lazy var collectionView: UICollectionView = {
@@ -27,16 +26,15 @@ class MainViewController: UIViewController {
         layout.itemSize = CGSize(width: length, height: length)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        
+        // FIXME: Нужет отступ?
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor(named: "ColorDeafult")
-        
-        collectionView.register(
-            MainCollectionViewCell.self,
-            forCellWithReuseIdentifier: MainCollectionViewCell.identifier
+        // FIXME: Нужет отступ?
+        collectionView.register(MainCollectionViewCell.self,
+                                forCellWithReuseIdentifier: MainCollectionViewCell.identifier
         )
-        
+        // FIXME: Нужет отступ?
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
         
@@ -71,11 +69,11 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         characters.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MainCollectionViewCell.identifier,
-            for: indexPath) as? MainCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.identifier,
+                                                            for: indexPath) as? MainCollectionViewCell else {
             
             return UICollectionViewCell()
         }
@@ -83,7 +81,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         let character = characters[indexPath.item]
         
         cell.show(character: character)
-        presenter?.imageDidLoaded(with: character.image, completion: cell.show)
+        presenter?.imageDidLoad(with: character.image, completion: cell.show)
         
         return cell
     }
@@ -93,7 +91,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         // FIXME: Если не сработает, то что делать?
         guard let selectedCell = collectionView.cellForItem(at: indexPath) as? MainCollectionViewCell,
               let selectedCellSuperview = selectedCell.superview else {
-            // FIXME: Тут нужен отступ?
+
             return
         }
         
@@ -102,7 +100,9 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         presenter?.didSelectItemAt(character: characters[indexPath.item], originFrame: originFrame)
     }
     
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView,
+                        willDisplay cell: UICollectionViewCell,
+                        forItemAt indexPath: IndexPath) {
         
         if indexPath.last == characters.count - 1 {
             
@@ -112,8 +112,13 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
 }
 
 extension MainViewController: MainViewProtocol {
+    func showCharacters(_ characters: [CharacterEntity]) async {
+        
+        self.characters += characters
+        self.collectionView.reloadData()
+    }
     
-    func show(error: Error) {
+    func showError(_ error: Error) {
         
         // FIXME: Так?
         let alertController = UIAlertController(title: "Error",
@@ -126,7 +131,7 @@ extension MainViewController: MainViewProtocol {
             title: "Try again",
             style: .default,
             handler: { [weak self]  _ in
-                // FIXME: Тут нужен отступ?
+                
                 self?.presenter?.viewDidLoad()
             }
         )
@@ -137,11 +142,5 @@ extension MainViewController: MainViewProtocol {
             
             self.present(alertController, animated: true)
         }
-    }
-    
-    func show(characters: [RMCharacterModel]) async {
-        
-        self.characters += characters
-        self.collectionView.reloadData()
     }
 }

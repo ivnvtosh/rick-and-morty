@@ -7,7 +7,7 @@
 
 import UIKit
 
-// FIXME: Разбить на 2 класса ImageService и ImageCashe
+// FIXME: Разбить на 2 класса ImageService и ImageCashe //  Паттерн Proxy? // Паттерн ChainOfResponsibility?
 /// Сервис выполянет сетевой запрос для загрузки и кэширования изображения.
 /// В случае если изображение уже присутсвует в кэше, то загрузка выпоняться не будет.
 class ImageService {
@@ -33,34 +33,26 @@ class ImageService {
             return cachedImage
         }
         
-        do {
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let response = response as? HTTPURLResponse else {
             
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let response = response as? HTTPURLResponse else {
-                
-                throw RickAndMortyError.failedToConvertResponse
-            }
-            
-            if response.statusCode != 200 {
-                
-                throw RickAndMortyError.statusCodeIsNot200(response.statusCode)
-            }
-            
-            guard let image = UIImage(data: data) else {
-                
-                throw ImageError.notInitializeImageFromData
-            }
-            
-            // FIXME: Код не синхронизирован
-            ImageService.imageCache.setObject(image, forKey: imageURL as NSString)
-            
-            return image
+            throw RickAndMortyError.failedToConvertResponse
         }
         
-        catch {
+        if response.statusCode != 200 {
             
-            throw error
+            throw RickAndMortyError.statusCodeIsNot200(response.statusCode)
         }
+        
+        guard let image = UIImage(data: data) else {
+            
+            throw ImageError.notInitializeImageFromData
+        }
+        
+        // FIXME: Код не синхронизирован
+        ImageService.imageCache.setObject(image, forKey: imageURL as NSString)
+        
+        return image
     }
 }

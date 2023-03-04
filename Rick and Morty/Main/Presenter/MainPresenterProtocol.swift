@@ -7,20 +7,15 @@
 
 import UIKit
 
-protocol MainPresenterProtocol: AnyObject {
+protocol MainPresenterInput: AnyObject {
     
     func viewDidLoad()
-    func viewDidLoad(with characters: RMCharacterInfoModel)
     
-    func viewDidLoad(with error: Error)
-    
-    // FIXME: Так?
-    func imageDidLoaded(with url: String?,
-                        completion: @escaping ((UIImage) -> Void))
-    // FIXME: Или тик так?
-    func imageDidLoad(
-        with result: Result<UIImage, Error>,
-        completion: @escaping ((UIImage) -> Void))
-    
-    func didSelectItemAt(character: RMCharacterModel, originFrame: CGRect)
+    func imageDidLoad(with url: String, completion: @escaping ((UIImage) async -> Void))
+        
+    func didSelectItemAt(character: CharacterEntity, originFrame: CGRect)
+}
+
+protocol MainPresenterOutput: AnyObject {
+
 }

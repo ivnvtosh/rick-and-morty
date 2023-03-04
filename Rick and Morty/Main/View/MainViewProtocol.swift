@@ -9,6 +9,6 @@ import Foundation
 
 protocol MainViewProtocol: AnyObject {
     
-    func show(characters: [RMCharacterModel]) async
-    func show(error: Error)
+    func showCharacters(_ characters: [CharacterEntity]) async
+    func showError(_ error: Error)
 }

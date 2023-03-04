@@ -13,87 +13,64 @@ class MainPresenter {
     // FIXME: Тут нужен отступ?
     var router: MainRouterProtocol
     // FIXME: Тут нужен отступ?
-    var interactor: MainInteractorProtocol
+    var interactor: MainInteractorInput
     // FIXME: Тут сделтать двойной отступ. Двойной отступ впринципе делают?
     
-    init(interactor: MainInteractorProtocol, router: MainRouterProtocol) {
+    init(interactor: MainInteractorInput, router: MainRouterProtocol) {
         
         self.interactor = interactor
         self.router = router
     }
 }
 
-extension MainPresenter: MainPresenterProtocol {
+extension MainPresenter: MainPresenterInput {
     
     func viewDidLoad() {
         
-        Task {
+        // FIXME: main?
+        Task { @MainActor in
             
-            await interactor.load()
+            do {
+                
+                let characters = try await interactor.loadCharacter()
+                
+                await self.view?.showCharacters(characters)
+            }
+            
+            catch {
+                
+                view?.showError(error)
+            }
         }
     }
     
-    // FIXME: как переименовать?
-    func viewDidLoad(with characters: RMCharacterInfoModel) {
-        
-        // FIXME: Уйдет само
-        guard let results = characters.results else {
-            
-            return
-        }
+    func imageDidLoad(with url: String, completion: @escaping ((UIImage) async -> Void)) {
         
         Task { @MainActor in
-            // FIXME: Тут нужен отступ?
-            await self.view?.show(characters: results)
-        }
-    }
-    
-    // FIXME: как переименовать?
-    func viewDidLoad(with error: Error) {
-        
-        view?.show(error: error)
-    }
-    
-    func imageDidLoaded(with url: String?, completion: @escaping ((UIImage) -> Void)) {
-        
-        guard let url else {
             
-            // FIXME: Переписать?
-            if let image = UIImage(systemName: "externaldrive.trianglebadge.exclamationmark") {
+            do {
                 
-                completion(image)
+                let image = try await interactor.loadImage(with: url)
+                
+                await completion(image)
             }
             
-            return
-        }
-        
-        Task {
-            
-            await self.interactor.loadImage(with: url, completion: completion)
-        }
-    }
-    
-    // FIXME: Уйдет само
-    func imageDidLoad(with result: Result<UIImage, Error>, completion: @escaping ((UIImage) -> Void)) {
-        
-        switch result {
-            
-        case .success(let image):
-            completion(image)
-            
-        case .failure(let error):
-            print(error.localizedDescription)
-            
-            // FIXME: Переписать?
-            if let image = UIImage(systemName: "externaldrive.trianglebadge.exclamationmark") {
+            catch {
                 
-                completion(image)
+                print(error.localizedDescription)
+                
+                await completion(UIImage(systemName: "externaldrive.trianglebadge.exclamationmark") ?? .remove)
             }
+
         }
     }
     
-    func didSelectItemAt(character: RMCharacterModel, originFrame: CGRect) {
+    func didSelectItemAt(character: CharacterEntity, originFrame: CGRect) {
         
-        router.show(character: character, originFrame: originFrame)
+        router.showCharacter(character, originFrame: originFrame)
     }
+}
+
+extension MainPresenter: MainPresenterOutput {
+    
 }

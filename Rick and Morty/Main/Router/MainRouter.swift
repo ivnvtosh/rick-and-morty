@@ -7,23 +7,25 @@
 
 import UIKit
 
-class MainRouter: MainRouterProtocol {
+class MainRouter {
     
-    weak var viewController: MainViewController?
+    weak var viewController: UIViewController?
 
     // FIXME: Убрать
 	let transitioningDelegate = TransitioningDelegate()
+}
 
+extension MainRouter: MainRouterProtocol {
 
-	func show(character: RMCharacterModel, originFrame: CGRect) {
+    func showCharacter(_ character: CharacterEntity, originFrame: CGRect) {
         
-		let characterViewController = CharacterModuleBuilder.build(with: character)
-        
-		transitioningDelegate.presentationAnimation = CharacterAnimator(originFrame: originFrame, isPresented: true)
-		transitioningDelegate.dismissalAnimation = CharacterAnimator(originFrame: originFrame, isPresented: false)
-		characterViewController.transitioningDelegate = transitioningDelegate
-        characterViewController.modalPresentationStyle = .fullScreen
-        
-		viewController?.present(characterViewController, animated: true)
-	}
+//        let characterViewController = CharacterModuleBuilder.build(with: character)
+//
+//        transitioningDelegate.presentationAnimation = CharacterAnimator(originFrame: originFrame, isPresented: true)
+//        transitioningDelegate.dismissalAnimation = CharacterAnimator(originFrame: originFrame, isPresented: false)
+//        characterViewController.transitioningDelegate = transitioningDelegate
+//        characterViewController.modalPresentationStyle = .fullScreen
+//
+//        viewController?.present(characterViewController, animated: true)
+    }
 }

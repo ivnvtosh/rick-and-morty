@@ -9,6 +9,7 @@ import UIKit
 
 class MainCollectionViewCell: UICollectionViewCell {
     
+    // FIXME: class?
     static let identifier = "CollectionViewCell"
     
     var imageIdentifier = ""
@@ -19,6 +20,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        
         contentView.addSubview(imageView)
         
         return imageView
@@ -30,6 +32,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 20.0)
         label.translatesAutoresizingMaskIntoConstraints = false
+        
         contentView.addSubview(label)
         
         return label
@@ -41,6 +44,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         
         imageView.image = UIImage(systemName: "circle.fill")
         imageView.tintColor = .gray
+        
         contentView.addSubview(imageView)
         
         return imageView
@@ -51,6 +55,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 14)
+        // FIXME: Тут нужен отступ? Так?
         label.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(label)
         
@@ -64,7 +69,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         activityIndicatorView.isHidden = false
         activityIndicatorView.startAnimating()
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-        // FIXME: Тут нужен отступ?
+        // FIXME: Тут нужен отступ? Или так?
         contentView.addSubview(activityIndicatorView)
         
         return activityIndicatorView
@@ -80,6 +85,7 @@ class MainCollectionViewCell: UICollectionViewCell {
     private func setupView() {
         
         contentView.backgroundColor = UIColor(named: "ColorCell")
+        // FIXME: Тут нужен отступ?
         contentView.layer.cornerRadius = 15
         contentView.clipsToBounds = true
     }
@@ -132,42 +138,25 @@ class MainCollectionViewCell: UICollectionViewCell {
         imageIdentifier = ""
     }
     
-    public func show(character: RMCharacterModel) {
+    // FIXME: Нормально?
+    public func show(character: CharacterEntity) {
         
         nameLabel.text = character.name
         
-        // FIXME: Нормально?
-        descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
+        descriptionLabel.text = character.status.rawValue + " - " + character.species
         
-        if let imageURL = character.image {
-            
-            imageIdentifier = imageURL
-        }
-        
-        // FIXME: Нормально?
-        switch character.status! {
-            
-        case .alive:
-            statusImageView.tintColor = UIColor(named: "RMColorGreen")
-            
-        case .dead:
-            statusImageView.tintColor = UIColor(named: "RMColorRed")
-            
-        case .unknown:
-            statusImageView.tintColor = UIColor(named: "RMColorGray")
-            
-        case .none:
-            statusImageView.tintColor = UIColor(named: "RMColorGray")
-        }
+        let imageURL = character.image
+        imageIdentifier = imageURL
+                
+        let nameColor = character.getStatusPathForImage()
+        statusImageView.tintColor = UIColor(named: nameColor)
     }
     
-    public func show(image: UIImage) {
+    public func show(image: UIImage) async {
         
-        DispatchQueue.main.async { [weak self] in
-            
-            self?.activityIndicatorView.stopAnimating()
-            self?.activityIndicatorView.isHidden = true
-            self?.imageView.image = image
-        }
+        activityIndicatorView.stopAnimating()
+        activityIndicatorView.isHidden = true
+        
+        imageView.image = image
     }
 }

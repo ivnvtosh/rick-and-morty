@@ -8,7 +8,7 @@
 import UIKit
 
 // FIXME: Удалить и переписать в сам сервис
-// FIXME: Стоит ли исползовать паттерн Builder, который будет формировать запрос? Думаю, мб
+// FIXME: Стоит ли исползовать паттерн Builder, который будет формировать запрос?
 /// A type representing one of three possible request options: character, location, episode.
 enum RickAndMortyTypeWithRequest: String {
     
