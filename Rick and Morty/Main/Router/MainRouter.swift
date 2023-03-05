@@ -13,6 +13,11 @@ class MainRouter {
 
     // FIXME: Убрать
 	let transitioningDelegate = TransitioningDelegate()
+	
+	init(view: UIViewController) {
+		
+		self.viewController = view
+	}
 }
 
 extension MainRouter: MainRouterProtocol {

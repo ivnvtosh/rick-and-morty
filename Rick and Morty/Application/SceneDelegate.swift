@@ -23,8 +23,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let tabBarController = UITabBarController()
         
+		let mainBuilder: MainModuleBuilderProtocol = MainModuleBuilder()
+		
         let episodeViewController = EpisodeModuleBuilder.build()
-        let mainViewController = MainModuleBuilder.build()
+        let mainViewController = mainBuilder.build()
         let locationViewController = LocationModuleBuilder.build()
         
         episodeViewController.tabBarItem = UITabBarItem(
@@ -32,11 +34,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             image: UIImage(systemName: "folder.circle.fill"),
             tag: 0
         )
+		
         mainViewController.tabBarItem = UITabBarItem(
             title: "Characters",
             image: UIImage(systemName: "person.circle.fill"),
             tag: 1
         )
+		
         locationViewController.tabBarItem = UITabBarItem(
             title: "Locations",
             image: UIImage(systemName: "map.circle.fill"),

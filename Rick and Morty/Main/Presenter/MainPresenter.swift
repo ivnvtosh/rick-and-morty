@@ -16,8 +16,9 @@ class MainPresenter {
     var interactor: MainInteractorInput
     // FIXME: Тут сделтать двойной отступ. Двойной отступ впринципе делают?
     
-    init(interactor: MainInteractorInput, router: MainRouterProtocol) {
+	init(view: MainViewProtocol, interactor: MainInteractorInput, router: MainRouterProtocol) {
         
+		self.view = view
         self.interactor = interactor
         self.router = router
     }
@@ -44,7 +45,8 @@ extension MainPresenter: MainPresenterInput {
         }
     }
     
-    func imageDidLoad(with url: String, completion: @escaping ((UIImage) async -> Void)) {
+	// FIXME: Событие
+    func cellDidLoad(with url: String, completion: @escaping ((UIImage) async -> Void)) {
         
         Task { @MainActor in
             
@@ -59,7 +61,10 @@ extension MainPresenter: MainPresenterInput {
                 
                 print(error.localizedDescription)
                 
-                await completion(UIImage(systemName: "externaldrive.trianglebadge.exclamationmark") ?? .remove)
+				let systemName = "externaldrive.trianglebadge.exclamationmark"
+				let image = UIImage(systemName: systemName) ?? .remove
+				
+				await completion(image)
             }
 
         }

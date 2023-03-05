@@ -5,6 +5,7 @@
 //  Created by Anton Ivanov on 04.03.2023.
 //
 
+// FIXME: Стоит ли модель делать полную?
 struct CharacterEntity {
     
     let id: Int
@@ -19,33 +20,53 @@ struct CharacterEntity {
     
     let gender: RMCharacterGenderModel
     
+	// FIXME: Сам хз что это, то есть буквально название ничего не говорит
     let origin: RMCharacterOriginModel
     
     let location: RMCharacterLocationModel
     
+	// FIXME: переименовать на imageURL?
     let image: String
     
+	// FIXME: Или перемеиновать?
+	/// Соддержит ссылки на эпизоды, в которых встречался персонаж
     let episode: [String]
     
     let url: String
     
     let created: String
-    
-    
-    init(model: RMCharacterModel) {
-        
-        self.id = model.id!
-        self.name = model.name!
-        self.status = model.status!
-        self.species = model.species!
-        self.type = model.type!
-        self.gender = model.gender!
-        self.origin = model.origin!
-        self.location = model.location!
-        self.image = model.image!
-        self.episode = model.episode!
-        self.url = model.url!
-        self.created = model.created!
+
+	// FIXME: бан
+	init(model: RMCharacterModel) throws {
+		
+		guard let id = model.id,
+			  let name = model.name,
+			  let status = model.status,
+			  let species = model.species,
+			  let type = model.type,
+			  let gender = model.gender,
+			  let origin = model.origin,
+			  let location = model.location,
+			  let image = model.image,
+			  let episode = model.episode,
+			  let url = model.url,
+			  let created = model.created else {
+			
+			throw MainInteractorError.failedToConvertEntity
+		}
+		
+        self.id = id
+        self.name = name
+        self.status = status
+        self.species = species
+        self.type = type
+        self.gender = gender
+        self.origin = origin
+        self.location = location
+        self.image = image
+        self.episode = episode
+        self.url = url
+        self.created = created
     }
     
     func getStatusPathForImage() -> String {

@@ -7,23 +7,24 @@
 
 import UIKit
 
-// FIXME: Протокол
-
 class MainModuleBuilder {
-    
-    static func build() -> MainViewController {
-        
-        let interactor = MainInteractor()
-        // FIXME: view
-        let router = MainRouter()
-        let presenter = MainPresenter(interactor: interactor, router: router)
-        let viewController = MainViewController()
-        
-        viewController.presenter = presenter
-        presenter.view = viewController
-        interactor.presenter = presenter
-        router.viewController = viewController
-        
-        return viewController
-    }
+
+}
+
+extension MainModuleBuilder: MainModuleBuilderProtocol {
+	
+	func build() -> MainViewController {
+		
+		let viewController = MainViewController()
+		let interactor = MainInteractor()
+		let router = MainRouter(view: viewController)
+		let presenter = MainPresenter(view: viewController,
+									  interactor: interactor,
+									  router: router)
+		
+		viewController.presenter = presenter
+		interactor.presenter = presenter
+		
+		return viewController
+	}
 }

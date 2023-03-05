@@ -25,14 +25,15 @@ class RickAndMortyService {
             throw RickAndMortyError.failedToConvertResponse
         }
         
+		// FIXME: ошибка 404
         if response.statusCode != 200 {
             
             throw RickAndMortyError.statusCodeIsNot200(response.statusCode)
         }
-        
+		
         do {
             
-            // FIXME: Нужно ли вынести объект декодера в член класса?
+            // FIXME: Нужно ли вынести декодер в член класса?
             let decoder = JSONDecoder()
             let object = try decoder.decode(T.self, from: data)
             
@@ -46,19 +47,7 @@ class RickAndMortyService {
             throw RickAndMortyError.failedToDecode(message)
         }
     }
-    
-    /// Универсальный метод, который формирует один из трех возможных вариантов запрос и затем выполяняет его.
-    /// - Parameters:
-    ///     - type RickAndMortyTypeWithRequest: enum, который составляет
-    ///       один из трех возможных вариантов запроса: character, location, episode.
-    /// - Returns: Возвращает одну из моделей: RMCharacterInfoModel, RMLocationInfoModel, RMEpisodeInfoModel.
-    private func dataTask<T: Decodable>(type: RickAndMortyTypeWithRequest) async throws -> T {
         
-        let request = try type.getRequest()
-        
-        return try await dataTask(with: request)
-    }
-    
     /// Универсальный метод, который формирует запроc по готовой ссылке и затем выполяняет его.
     /// - Parameters:
     ///     - with url URL: Ссылка для загрузки.
@@ -69,53 +58,32 @@ class RickAndMortyService {
         
         return try await dataTask(with: request)
     }
-    
-    // MARK: - Characters
-    
-    /// Метод, который выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
-    /// - Returns: Возвращает модель, которая содержит массив первых 10 персонажей и курсор.
-    public func getCharacters() async throws -> RMCharacterInfoModel {
-        
-        try await dataTask(type: .character)
-    }
-    
-    /// Метод выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
-    /// - Parameters:
-    ///     - from page String: ссылка на страницу, с которой будут получены данные.
-    /// - Returns: Возвращает модель, которая содержит массив 10 персонажей и курсор, по текущей страницы.
-    public func getCharacters(from page: String) async throws -> RMCharacterInfoModel {
-        
-        guard let url = URL(string: page) else {
-            
-            throw RickAndMortyError.invalidURL
-        }
-        
-        return try await dataTask(with: url)
-    }
+}
 
-//	// MARK: - Locations
-//
-//	public func getLocations(completion: @escaping (Result<RMLocationInfoModel, Error>) -> Void) {
+extension RickAndMortyService: RickAndMortyProtocol {
 	
-//		dataTask(type: .location, completion: completion)
-//	}
-//
-//	public func getLocations(page: String, completion: @escaping (Result<RMLocationInfoModel, Error>) -> Void) {
+	// MARK: - Characters
 	
-//		guard let url = URL(string: page) else { return }
-//		dataTask(with: url, completion: completion)
-//	}
-//
-//	// MARK: - Episodes
-//
-//	public func getEpisodes(completion: @escaping (Result<RMEpisodeInfoModel, Error>) -> Void) {
+	/// Метод, который выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
+	/// - Returns: Возвращает модель, которая содержит массив первых 10 персонажей и курсор.
+	public func getCharacters() async throws -> RMCharacterInfoModel {
+		
+		let request = try RequestCharactersBuilder.build()
+		
+		return try await dataTask(with: request)
+	}
 	
-//		dataTask(type: .episode, completion: completion)
-//	}
-//
-//	public func getEpisodes(page: String, completion: @escaping (Result<RMEpisodeInfoModel, Error>) -> Void) {
-	
-//		guard let url = URL(string: page) else { return }
-//		dataTask(with: url, completion: completion)
-//	}
+	/// Метод выполняет сетевой запрос, для получения актуальной ифнормации по персонажам.
+	/// - Parameters:
+	///     - from page String: ссылка на страницу, с которой будут получены данные.
+	/// - Returns: Возвращает модель, которая содержит массив 10 персонажей и курсор, по текущей страницы.
+	public func getCharacters(from page: String) async throws -> RMCharacterInfoModel {
+		
+		guard let url = URL(string: page) else {
+			
+			throw RickAndMortyError.invalidURL
+		}
+		
+		return try await dataTask(with: url)
+	}
 }

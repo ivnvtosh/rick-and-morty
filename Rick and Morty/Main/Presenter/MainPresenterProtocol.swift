@@ -11,7 +11,7 @@ protocol MainPresenterInput: AnyObject {
     
     func viewDidLoad()
     
-    func imageDidLoad(with url: String, completion: @escaping ((UIImage) async -> Void))
+	func cellDidLoad(with url: String, completion: @escaping ((UIImage) async -> Void))
         
     func didSelectItemAt(character: CharacterEntity, originFrame: CGRect)
 }

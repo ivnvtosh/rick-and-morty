@@ -11,35 +11,48 @@ class MainInteractor {
     
     weak var presenter: MainPresenterOutput?
     
-    // FIXME: rename
-    let rmClient = RickAndMortyService()
-    var rmInfo: RMInfoModel?
+    // FIXME: rename and add protocol
+	let rickAndMortyService: RickAndMortyProtocol
+    var rickAndMortyInfo: RMInfoModel?
     
-    let imageService = ImageService()
+	let imageService: ImageService
+	
+	init() {
+		
+		self.rickAndMortyService = RickAndMortyService()
+		self.imageService = ImageService()
+	}
 }
 
 extension MainInteractor: MainInteractorInput {
-
+	
     func loadCharacter() async throws -> [CharacterEntity] {
         
-        // FIXME: разбить на 2 метода
-        if let nextPage = rmInfo?.next {
+		let сharactersWithInfo: RMCharacterInfoModel?
+        
+        if let nextPage = rickAndMortyInfo?.next {
             
-            let сharacters = try await rmClient.getCharacters(from: nextPage)
-            
-            rmInfo = сharacters.info
-            
-            return сharacters.results as! [CharacterEntity]
+			сharactersWithInfo = try await rickAndMortyService.getCharacters(from: nextPage)
         }
         
         else {
             
-            let сharacters = try await rmClient.getCharacters()
-            
-            rmInfo = сharacters.info
-            
-            return сharacters.results as! [CharacterEntity]
+			сharactersWithInfo = try await rickAndMortyService.getCharacters()
         }
+		
+		guard let сharactersWithInfo,
+			  let info = сharactersWithInfo.info,
+			  let characterModels = сharactersWithInfo.results else {
+			
+			throw MainInteractorError.noData
+		}
+		
+		rickAndMortyInfo = info
+		
+		// FIXME: бан
+		let characters = try characterModels.map { try CharacterEntity(model: $0) }
+		
+		return characters
     }
     
     func loadImage(with url: String) async throws -> UIImage {

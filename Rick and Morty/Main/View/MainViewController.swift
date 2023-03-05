@@ -72,6 +72,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+		// FIXME: Слишком длинная строка
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.identifier,
                                                             for: indexPath) as? MainCollectionViewCell else {
             
@@ -81,7 +82,8 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         let character = characters[indexPath.item]
         
         cell.show(character: character)
-        presenter?.imageDidLoad(with: character.image, completion: cell.show)
+		
+        presenter?.cellDidLoad(with: character.image, completion: cell.show)
         
         return cell
     }
