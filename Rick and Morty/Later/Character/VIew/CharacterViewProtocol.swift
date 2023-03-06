@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CharacterViewProtocol: AnyObject {
-    func show(character: RMCharacterModel)
+    func show(character: CharacterEntity)
     func show(image: UIImage)
 }
 

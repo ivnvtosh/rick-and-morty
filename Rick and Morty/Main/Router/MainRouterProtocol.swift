@@ -11,3 +11,5 @@ protocol MainRouterProtocol {
     
     func showCharacter(_ character: CharacterEntity, originFrame: CGRect)
 }
+
+// FIXME: Я часто наблюдаю, что класс роутер используют как builder

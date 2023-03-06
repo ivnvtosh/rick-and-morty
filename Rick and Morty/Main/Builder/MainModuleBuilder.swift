@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainModuleBuilder {
+final class MainModuleBuilder {
 
 }
 

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainPresenter {
+final class MainPresenter {
     
     weak var view: MainViewProtocol?
     // FIXME: Тут нужен отступ?

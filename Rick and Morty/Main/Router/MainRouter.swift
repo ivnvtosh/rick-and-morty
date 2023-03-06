@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainRouter {
+final class MainRouter {
     
     weak var viewController: UIViewController?
 
@@ -24,13 +24,14 @@ extension MainRouter: MainRouterProtocol {
 
     func showCharacter(_ character: CharacterEntity, originFrame: CGRect) {
         
-//        let characterViewController = CharacterModuleBuilder.build(with: character)
-//
-//        transitioningDelegate.presentationAnimation = CharacterAnimator(originFrame: originFrame, isPresented: true)
-//        transitioningDelegate.dismissalAnimation = CharacterAnimator(originFrame: originFrame, isPresented: false)
-//        characterViewController.transitioningDelegate = transitioningDelegate
-//        characterViewController.modalPresentationStyle = .fullScreen
-//
-//        viewController?.present(characterViewController, animated: true)
+        let characterViewController = CharacterModuleBuilder.build(with: character)
+
+        transitioningDelegate.presentationAnimation = CharacterAnimator(originFrame: originFrame, isPresented: true)
+        transitioningDelegate.dismissalAnimation = CharacterAnimator(originFrame: originFrame, isPresented: false)
+        characterViewController.transitioningDelegate = transitioningDelegate
+        characterViewController.modalPresentationStyle = .fullScreen
+
+        viewController?.present(characterViewController, animated: true)
+//        viewController?.navigationController?.pushViewController(characterViewController, animated: true)
     }
 }

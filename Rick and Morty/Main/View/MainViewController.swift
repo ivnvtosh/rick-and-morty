@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+final class MainViewController: UIViewController {
     
     var presenter: MainPresenterInput?
     
@@ -43,6 +43,7 @@ class MainViewController: UIViewController {
     
     // MARK: - View lifecycle
     
+    // FIXME: Стоит ли вызов метода setupConstraint перенести в presenter?
     override func viewDidLoad() {
         super.viewDidLoad()
         

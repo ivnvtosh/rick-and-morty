@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainInteractor {
+final class MainInteractor {
     
     weak var presenter: MainPresenterOutput?
     

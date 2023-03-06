@@ -11,12 +11,12 @@ import UIKit
 /// персонажам, локациям и эпизодам по мультсериалу "Рик и Морти".
 class RickAndMortyService {
     
-    /// Универсальный метод, который по запросу загружает JSON и декодирует его в модель.
+    // FIXME: rename
+    /// Метод, который по запросу загружает JSON и проверят ответ
     /// - Parameters:
-    ///     - T Decodable: Модель, которая будет получна из JSON
-    ///     - with request URLRequest: Сформированный запрос.
-    /// - Returns: Результирующая модель.
-    private func dataTask<T: Decodable>(with request: URLRequest) async throws -> T {
+    ///     - with request URLRequest: Запрос.
+    /// - Returns: Последовательность битов - JSON.
+    private func session(with request: URLRequest) async throws -> Data {
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
@@ -25,19 +25,31 @@ class RickAndMortyService {
             throw RickAndMortyError.failedToConvertResponse
         }
         
-		// FIXME: ошибка 404
+        // FIXME: Обрабатыват ошибку 404?
         if response.statusCode != 200 {
             
             throw RickAndMortyError.statusCodeIsNot200(response.statusCode)
         }
-		
+        
+        return data
+    }
+    
+    /// Универсальный метод, который расшифровывает данные в модель.
+    /// - Parameters:
+    ///     - T Decodable: Модель, которая будет получна из JSON.
+    ///     - from data Data: Последовательность битов - JSON.
+    /// - Returns: Результирующая модель.
+    private func decode<T: Decodable>(from data: Data) throws -> T {
+                
         do {
             
-            // FIXME: Нужно ли вынести декодер в член класса?
+            // FIXME: Нужно ли вынести декодер в член класса? а то в инит?
             let decoder = JSONDecoder()
-            let object = try decoder.decode(T.self, from: data)
             
-            return object
+            // FIXME: Норм практика?
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            
+            return try decoder.decode(T.self, from: data)
         }
         
         catch {
@@ -47,14 +59,30 @@ class RickAndMortyService {
             throw RickAndMortyError.failedToDecode(message)
         }
     }
+    
+    // FIXME: rename
+    /// Универсальный метод, который по запросу загружает JSON и декодирует его в модель.
+    /// - Parameters:
+    ///     - T Decodable: Модель, которая будет получна из JSON
+    ///     - with request URLRequest: Сформированный запрос.
+    /// - Returns: Результирующая модель.
+    private func dataTask<T: Decodable>(with request: URLRequest) async throws -> T {
         
+        let data = try await session(with: request)
+        
+        return try decode(from: data)
+    }
+    
     /// Универсальный метод, который формирует запроc по готовой ссылке и затем выполяняет его.
     /// - Parameters:
     ///     - with url URL: Ссылка для загрузки.
     /// - Returns: Возвращает модель.
     private func dataTask<T: Decodable>(with url: URL) async throws -> T {
         
-        let request = URLRequest(url: url)
+        // FIXME: Дублируется
+        let request = URLRequest(url: url,
+                                 cachePolicy: .returnCacheDataElseLoad,
+                                 timeoutInterval: 10)
         
         return try await dataTask(with: request)
     }
@@ -68,7 +96,9 @@ extension RickAndMortyService: RickAndMortyProtocol {
 	/// - Returns: Возвращает модель, которая содержит массив первых 10 персонажей и курсор.
 	public func getCharacters() async throws -> RMCharacterInfoModel {
 		
-		let request = try RequestCharactersBuilder.build()
+		let request = try URLRequestBuilder(base: "https://rickandmortyapi.com", path: "/api/character")
+            .set(method: .get)
+            .build()
 		
 		return try await dataTask(with: request)
 	}
@@ -79,6 +109,7 @@ extension RickAndMortyService: RickAndMortyProtocol {
 	/// - Returns: Возвращает модель, которая содержит массив 10 персонажей и курсор, по текущей страницы.
 	public func getCharacters(from page: String) async throws -> RMCharacterInfoModel {
 		
+        // FIXME: Тоже использовать builder?
 		guard let url = URL(string: page) else {
 			
 			throw RickAndMortyError.invalidURL

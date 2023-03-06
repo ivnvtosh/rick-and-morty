@@ -19,4 +19,4 @@ enum RickAndMortyError: Error {
     case failedToDecode(String)
 }
 
-// FIXME: Нужно ли как-то организовать папку API?
+// FIXME: Как организовать папку API?

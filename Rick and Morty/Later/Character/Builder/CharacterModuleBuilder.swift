@@ -8,7 +8,7 @@
 import UIKit
 
 class CharacterModuleBuilder {
-	static func build(with character: RMCharacterModel) -> CharacterViewController {
+	static func build(with character: CharacterEntity) -> CharacterViewController {
 		let interactor = CharacterInteractor()
 		let router = CharacterRouter()
 		let presenter = CharacterPresenter(interactor: interactor, router: router)

@@ -52,6 +52,7 @@ struct CharacterEntity {
 			  let url = model.url,
 			  let created = model.created else {
 			
+            // FIXME: бан
 			throw MainInteractorError.failedToConvertEntity
 		}
 		

@@ -112,11 +112,11 @@ class CharacterViewController: UIViewController {
 // MARK: - CharacterViewProtocol
 
 extension CharacterViewController: CharacterViewProtocol {
-	func show(character: RMCharacterModel) {
+	func show(character: CharacterEntity) {
         presenter?.imageDidLoaded(with: character.image)
 		DispatchQueue.main.async {
 			self.nameLabel.text = character.name
-			self.descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
+			self.descriptionLabel.text = character.status.rawValue + " - " + character.species
 		}
 	}
 
