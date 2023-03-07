@@ -8,14 +8,14 @@
 import UIKit
 
 protocol EpisodeViewProtocol: AnyObject {
-	func show(episodes: [RMEpisodeModel])
+	func show(episodes: [EpisodeModel])
 	func show(error: Error)
 }
 
 class EpisodeViewController: UIViewController {
     var presenter: EpisodePresenterProtocol?
 
-	var episodes = [RMEpisodeModel]()
+	var episodes = [EpisodeModel]()
 
 
 	lazy var collectionView: UICollectionView = {
@@ -112,7 +112,7 @@ extension EpisodeViewController: EpisodeViewProtocol {
 		}
 	}
 
-	func show(episodes: [RMEpisodeModel]) {
+	func show(episodes: [EpisodeModel]) {
 		DispatchQueue.main.async {
 			self.episodes += episodes
 			self.collectionView.reloadData()

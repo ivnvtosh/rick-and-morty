@@ -8,14 +8,14 @@
 protocol EpisodeInteractorProtocol: AnyObject {
 	func load()
 
-	var rmInfo: RMInfoModel? { get set }
+	var rmInfo: InfoModel? { get set }
 }
 
 class EpisodeInteractor: EpisodeInteractorProtocol {
     weak var presenter: EpisodePresenterProtocol?
 
 	let rmClient = RickAndMortyService()
-	var rmInfo: RMInfoModel?
+	var rmInfo: InfoModel?
 
 
 	func load() {

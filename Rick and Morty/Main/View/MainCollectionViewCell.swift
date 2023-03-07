@@ -7,13 +7,11 @@
 
 import UIKit
 
-class MainCollectionViewCell: UICollectionViewCell {
+final class MainCollectionViewCell: UICollectionViewCell {
     
-    // FIXME: class?
     static let identifier = "CollectionViewCell"
     
     var imageIdentifier = ""
-    
     
     lazy var imageView: UIImageView = {
         
@@ -55,8 +53,8 @@ class MainCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 14)
-        // FIXME: Тут нужен отступ? Так?
         label.translatesAutoresizingMaskIntoConstraints = false
+        
         contentView.addSubview(label)
         
         return label
@@ -69,7 +67,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         activityIndicatorView.isHidden = false
         activityIndicatorView.startAnimating()
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-        // FIXME: Тут нужен отступ? Или так?
+        
         contentView.addSubview(activityIndicatorView)
         
         return activityIndicatorView
@@ -85,7 +83,6 @@ class MainCollectionViewCell: UICollectionViewCell {
     private func setupView() {
         
         contentView.backgroundColor = UIColor(named: "ColorCell")
-        // FIXME: Тут нужен отступ?
         contentView.layer.cornerRadius = 15
         contentView.clipsToBounds = true
     }
@@ -93,7 +90,7 @@ class MainCollectionViewCell: UICollectionViewCell {
     private func setupConstraint() {
         
         NSLayoutConstraint.activate([
-            // FIXME: Тут нужен отступ?
+            
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -125,20 +122,19 @@ class MainCollectionViewCell: UICollectionViewCell {
         isHidden = false
         isSelected = false
         isHighlighted = false
-        // FIXME: Тут нужен отступ?
+        
         imageView.image = nil
-        // FIXME: Тут нужен отступ?
+        
         nameLabel.text = nil
-        // FIXME: Тут нужен отступ?
+        
         descriptionLabel.text = nil
-        // FIXME: Тут нужен отступ?
+        
         activityIndicatorView.isHidden = false
         activityIndicatorView.startAnimating()
         
         imageIdentifier = ""
     }
     
-    // FIXME: Нормально?
     public func show(character: CharacterEntity) {
         
         nameLabel.text = character.name

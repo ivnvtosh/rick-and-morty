@@ -8,14 +8,14 @@
 import UIKit
 
 protocol LocationViewProtocol: AnyObject {
-	func show(locations: [RMLocationModel])
+	func show(locations: [LocationModel])
 	func show(error: Error)
 }
 
 class LocationViewController: UIViewController {
     var presenter: LocationPresenterProtocol?
 
-	var locations = [RMLocationModel]()
+	var locations = [LocationModel]()
 
 
 	lazy var collectionView: UICollectionView = {
@@ -112,7 +112,7 @@ extension LocationViewController: LocationViewProtocol {
 		}
 	}
 
-	func show(locations: [RMLocationModel]) {
+	func show(locations: [LocationModel]) {
 		DispatchQueue.main.async {
 			self.locations += locations
 			self.collectionView.reloadData()

@@ -7,9 +7,7 @@
 
 import UIKit
 
-final class MainModuleBuilder {
-
-}
+final class MainModuleBuilder { }
 
 extension MainModuleBuilder: MainModuleBuilderProtocol {
 	

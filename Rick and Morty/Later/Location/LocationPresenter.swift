@@ -7,7 +7,7 @@
 
 protocol LocationPresenterProtocol: AnyObject {
 	func viewDidLoaded()
-	func viewDidLoad(with result: Result<RMLocationInfoModel, Error>)
+	func viewDidLoad(with result: Result<LocationInfoModel, Error>)
 }
 
 class LocationPresenter {
@@ -26,15 +26,15 @@ extension LocationPresenter: LocationPresenterProtocol {
 		interactor.load()
 	}
 	
-	func viewDidLoad(with result: Result<RMLocationInfoModel, Error>) {
-		switch result {
-		case .success(let locations):
-			interactor.rmInfo = locations.info
-			guard let results = locations.results else { return }
-			view?.show(locations: results)
-		case .failure(let error):
-			view?.show(error: error)
-		}
+	func viewDidLoad(with result: Result<LocationInfoModel, Error>) {
+//		switch result {
+//		case .success(let locations):
+//			interactor.rmInfo = locations.info
+//			guard let results = locations.results else { return }
+//			view?.show(locations: results)
+//		case .failure(let error):
+//			view?.show(error: error)
+//		}
 	}
 }
 

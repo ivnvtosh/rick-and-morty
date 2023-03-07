@@ -9,10 +9,9 @@ import UIKit
 
 final class MainViewController: UIViewController {
     
-    var presenter: MainPresenterInput?
+    var presenter: MainViewOutput?
     
     var characters = [CharacterEntity]()
-    
     
     lazy var collectionView: UICollectionView = {
         
@@ -26,16 +25,15 @@ final class MainViewController: UIViewController {
         layout.itemSize = CGSize(width: length, height: length)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        // FIXME: Нужет отступ?
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor(named: "ColorDeafult")
-        // FIXME: Нужет отступ?
         collectionView.register(MainCollectionViewCell.self,
                                 forCellWithReuseIdentifier: MainCollectionViewCell.identifier
         )
-        // FIXME: Нужет отступ?
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
         view.addSubview(collectionView)
         
         return collectionView
@@ -43,7 +41,6 @@ final class MainViewController: UIViewController {
     
     // MARK: - View lifecycle
     
-    // FIXME: Стоит ли вызов метода setupConstraint перенести в presenter?
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,7 +62,8 @@ final class MainViewController: UIViewController {
 
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
         
         characters.count
     }
@@ -73,7 +71,6 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-		// FIXME: Слишком длинная строка
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.identifier,
                                                             for: indexPath) as? MainCollectionViewCell else {
             
@@ -84,12 +81,13 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         
         cell.show(character: character)
 		
-        presenter?.cellDidLoad(with: character.image, completion: cell.show)
+        presenter?.didDisplayCell(with: character.image, completion: cell.show)
         
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
         
         // FIXME: Если не сработает, то что делать?
         guard let selectedCell = collectionView.cellForItem(at: indexPath) as? MainCollectionViewCell,
@@ -109,41 +107,16 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
         
         if indexPath.last == characters.count - 1 {
             
-            presenter?.viewDidLoad()
+            presenter?.willDisplayCell()
         }
     }
 }
 
-extension MainViewController: MainViewProtocol {
-    func showCharacters(_ characters: [CharacterEntity]) async {
+extension MainViewController: MainViewInput {
+    
+    func show(_ characters: [CharacterEntity]) async {
         
         self.characters += characters
         self.collectionView.reloadData()
-    }
-    
-    func showError(_ error: Error) {
-        
-        // FIXME: Так?
-        let alertController = UIAlertController(title: "Error",
-                                                message: error.localizedDescription,
-                                                preferredStyle: .alert
-        )
-        
-        // FIXME: Или так?
-        let alertAction = UIAlertAction(
-            title: "Try again",
-            style: .default,
-            handler: { [weak self]  _ in
-                
-                self?.presenter?.viewDidLoad()
-            }
-        )
-        
-        alertController.addAction(alertAction)
-        
-        Task {
-            
-            self.present(alertController, animated: true)
-        }
     }
 }

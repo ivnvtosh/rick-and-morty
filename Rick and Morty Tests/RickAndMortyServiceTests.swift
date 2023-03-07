@@ -30,9 +30,9 @@ final class RickAndMortyServiceTests: XCTestCase {
 
     actor CharacterModelsActor {
         
-        var characterModels: RMCharacterInfoModel?
+        var characterModels: CharacterInfo?
         
-        func setCharacterModels(new: RMCharacterInfoModel) {
+        func setCharacterModels(new: CharacterInfo) {
             
             characterModels = new
         }

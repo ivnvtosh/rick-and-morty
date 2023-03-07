@@ -144,7 +144,7 @@ class LocationCollectionViewCell: UICollectionViewCell {
 		}
 	}
 
-	public func show(locations: RMLocationModel) {
+	public func show(locations: LocationModel) {
 		nameLabel.text = locations.name
 //		descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
 

@@ -144,7 +144,7 @@ class EpisodeCollectionViewCell: UICollectionViewCell {
 		}
 	}
 
-	public func show(episodes: RMEpisodeModel) {
+	public func show(episodes: EpisodeModel) {
 		nameLabel.text = episodes.name
 //		descriptionLabel.text = (character.status?.rawValue ?? "") + " - " + (character.species ?? "")
 

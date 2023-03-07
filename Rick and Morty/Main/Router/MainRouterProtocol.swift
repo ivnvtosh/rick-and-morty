@@ -9,7 +9,6 @@ import Foundation
 
 protocol MainRouterProtocol {
     
-    func showCharacter(_ character: CharacterEntity, originFrame: CGRect)
+    func show(_ character: CharacterEntity, originFrame: CGRect)
+    func show(_ error: Error)
 }
-
-// FIXME: Я часто наблюдаю, что класс роутер используют как builder

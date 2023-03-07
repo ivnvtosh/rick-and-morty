@@ -7,7 +7,7 @@
 
 protocol EpisodePresenterProtocol: AnyObject {
 	func viewDidLoaded()
-	func viewDidLoad(with result: Result<RMEpisodeInfoModel, Error>)
+	func viewDidLoad(with result: Result<EpisodeInfoModel, Error>)
 }
 
 class EpisodePresenter {
@@ -26,15 +26,15 @@ extension EpisodePresenter: EpisodePresenterProtocol {
 		interactor.load()
 	}
 	
-	func viewDidLoad(with result: Result<RMEpisodeInfoModel, Error>) {
-		switch result {
-		case .success(let episodes):
-			interactor.rmInfo = episodes.info
-			guard let results = episodes.results else { return }
-			view?.show(episodes: results)
-		case .failure(let error):
-			view?.show(error: error)
-		}
+	func viewDidLoad(with result: Result<EpisodeInfoModel, Error>) {
+//		switch result {
+//		case .success(let episodes):
+//			interactor.rmInfo = episodes.info
+//			guard let results = episodes.results else { return }
+//			view?.show(episodes: results)
+//		case .failure(let error):
+//			view?.show(error: error)
+//		}
 	}
 }
 

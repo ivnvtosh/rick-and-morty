@@ -9,13 +9,13 @@ import UIKit
 
 final class MainInteractor {
     
-    weak var presenter: MainPresenterOutput?
+    weak var presenter: MainPresenter?
     
-    // FIXME: rename and add protocol
-	let rickAndMortyService: RickAndMortyProtocol
-    var rickAndMortyInfo: RMInfoModel?
+    private let imageService: ImageService
+	private let rickAndMortyService: RickAndMortyProtocol
     
-	let imageService: ImageService
+    var infoEntity: InfoEntity?
+    var characterEntity: [CharacterEntity]?
 	
 	init() {
 		
@@ -26,41 +26,43 @@ final class MainInteractor {
 
 extension MainInteractor: MainInteractorInput {
 	
+    func loadCharacterNext() async throws -> [CharacterEntity] {
+        
+        guard let nextPage = infoEntity?.next else {
+            
+            throw RickAndMortyError.invalidURL
+        }
+        
+        let сharactersWithInfo = try await rickAndMortyService.getCharacters(from: nextPage)
+        
+        infoEntity = InfoEntity(model: сharactersWithInfo.info)
+        let characterModels = сharactersWithInfo.results
+        
+        let characterEntity = characterModels.map { CharacterEntity(model: $0) }
+        
+        self.characterEntity = characterEntity
+        
+        return characterEntity
+    }
+    
     func loadCharacter() async throws -> [CharacterEntity] {
         
-		let сharactersWithInfo: RMCharacterInfoModel?
+        let сharactersWithInfo = try await rickAndMortyService.getCharacters()
         
-        if let nextPage = rickAndMortyInfo?.next {
-            
-			сharactersWithInfo = try await rickAndMortyService.getCharacters(from: nextPage)
-        }
+        infoEntity = InfoEntity(model: сharactersWithInfo.info)
+        let characterModels = сharactersWithInfo.results
         
-        else {
-            
-			сharactersWithInfo = try await rickAndMortyService.getCharacters()
-        }
-		
-		guard let сharactersWithInfo,
-			  let info = сharactersWithInfo.info,
-			  let characterModels = сharactersWithInfo.results else {
-			
-			throw MainInteractorError.noData
-		}
-		
-		rickAndMortyInfo = info
-		
-		// FIXME: бан
-		let characters = try characterModels.map { try CharacterEntity(model: $0) }
-		
-		return characters
+        let characterEntity = characterModels.map { CharacterEntity(model: $0) }
+        
+        self.characterEntity = characterEntity
+        
+        return characterEntity
     }
     
     func loadImage(with url: String) async throws -> UIImage {
         
-        return try await imageService.load(with: url)
+        try await imageService.load(with: url)
     }
 }
 
-extension MainInteractor: MainInteractorOutput {
-    
-}
+extension MainInteractor: MainInteractorOutput { }

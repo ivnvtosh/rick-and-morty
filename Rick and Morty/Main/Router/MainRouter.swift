@@ -22,7 +22,7 @@ final class MainRouter {
 
 extension MainRouter: MainRouterProtocol {
 
-    func showCharacter(_ character: CharacterEntity, originFrame: CGRect) {
+    func show(_ character: CharacterEntity, originFrame: CGRect) {
         
         let characterViewController = CharacterModuleBuilder.build(with: character)
 
@@ -32,6 +32,26 @@ extension MainRouter: MainRouterProtocol {
         characterViewController.modalPresentationStyle = .fullScreen
 
         viewController?.present(characterViewController, animated: true)
-//        viewController?.navigationController?.pushViewController(characterViewController, animated: true)
+    }
+    
+    // FIXME: handler
+    func show(_ error: Error) {
+        
+        let alertController = UIAlertController(title: "Error",
+                                                message: error.localizedDescription,
+                                                preferredStyle: .alert)
+        
+//        let alertAction = UIAlertAction(title: "Try again",
+//                                        style: .default,
+//                                        handler: { [weak viewController]  _ in
+//            viewController?.presenter?.viewDidLoad()
+//        })
+//        
+//        alertController.addAction(alertAction)
+        
+        Task {
+            
+            await viewController?.present(alertController, animated: true)
+        }
     }
 }

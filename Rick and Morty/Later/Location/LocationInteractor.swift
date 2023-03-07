@@ -8,7 +8,7 @@
 protocol LocationInteractorProtocol: AnyObject {
 	func load()
 
-	var rmInfo: RMInfoModel? { get set }
+	var rmInfo: InfoModel? { get set }
 }
 
 class LocationInteractor: LocationInteractorProtocol {
@@ -16,7 +16,7 @@ class LocationInteractor: LocationInteractorProtocol {
 
 
 	let rmClient = RickAndMortyService()
-	var rmInfo: RMInfoModel?
+	var rmInfo: InfoModel?
 
 	func load() {
 //		if let next = rickAndMortyInfo?.next {

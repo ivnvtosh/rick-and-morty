@@ -9,14 +9,13 @@ import UIKit
 
 final class MainPresenter {
     
-    weak var view: MainViewProtocol?
-    // FIXME: Тут нужен отступ?
-    var router: MainRouterProtocol
-    // FIXME: Тут нужен отступ?
+    weak var view: MainViewInput?
     var interactor: MainInteractorInput
-    // FIXME: Тут сделтать двойной отступ. Двойной отступ впринципе делают?
+    var router: MainRouterProtocol
     
-	init(view: MainViewProtocol, interactor: MainInteractorInput, router: MainRouterProtocol) {
+	init(view: MainViewInput,
+         interactor: MainInteractorInput,
+         router: MainRouterProtocol) {
         
 		self.view = view
         self.interactor = interactor
@@ -24,29 +23,28 @@ final class MainPresenter {
     }
 }
 
-extension MainPresenter: MainPresenterInput {
+extension MainPresenter: MainViewOutput {
     
     func viewDidLoad() {
         
-        // FIXME: main?
         Task { @MainActor in
             
             do {
                 
                 let characters = try await interactor.loadCharacter()
                 
-                await self.view?.showCharacters(characters)
+                await self.view?.show(characters)
             }
             
             catch {
                 
-                view?.showError(error)
+                router.show(error)
             }
         }
     }
     
 	// FIXME: Событие
-    func cellDidLoad(with url: String, completion: @escaping ((UIImage) async -> Void)) {
+    func didDisplayCell(with url: String, completion: @escaping ((UIImage) async -> Void)) {
         
         Task { @MainActor in
             
@@ -66,16 +64,31 @@ extension MainPresenter: MainPresenterInput {
 				
 				await completion(image)
             }
-
         }
     }
     
     func didSelectItemAt(character: CharacterEntity, originFrame: CGRect) {
         
-        router.showCharacter(character, originFrame: originFrame)
+        router.show(character, originFrame: originFrame)
+    }
+    
+    func willDisplayCell() {
+        
+        Task { @MainActor in
+            
+            do {
+                
+                let characters = try await interactor.loadCharacterNext()
+                
+                await self.view?.show(characters)
+            }
+            
+            catch {
+                
+                router.show(error)
+            }
+        }
     }
 }
 
-extension MainPresenter: MainPresenterOutput {
-    
-}
+extension MainPresenter: MainInteractorOutput { }

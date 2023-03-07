@@ -5,25 +5,24 @@
 //  Created by Anton Ivanov on 04.03.2023.
 //
 
-// FIXME: Стоит ли модель делать полную?
 struct CharacterEntity {
     
     let id: Int
     
     let name: String
     
-    let status: RMCharacterStatusModel
+    let status: CharacterStatus
     
     let species: String
     
     let type: String
     
-    let gender: RMCharacterGenderModel
+    let gender: CharacterGender
     
 	// FIXME: Сам хз что это, то есть буквально название ничего не говорит
-    let origin: RMCharacterOriginModel
+    let origin: CharacterOriginModel
     
-    let location: RMCharacterLocationModel
+    let location: CharacterLocationModel
     
 	// FIXME: переименовать на imageURL?
     let image: String
@@ -36,38 +35,20 @@ struct CharacterEntity {
     
     let created: String
 
-	// FIXME: бан
-	init(model: RMCharacterModel) throws {
+	init(model: CharacterModel) {
 		
-		guard let id = model.id,
-			  let name = model.name,
-			  let status = model.status,
-			  let species = model.species,
-			  let type = model.type,
-			  let gender = model.gender,
-			  let origin = model.origin,
-			  let location = model.location,
-			  let image = model.image,
-			  let episode = model.episode,
-			  let url = model.url,
-			  let created = model.created else {
-			
-            // FIXME: бан
-			throw MainInteractorError.failedToConvertEntity
-		}
-		
-        self.id = id
-        self.name = name
-        self.status = status
-        self.species = species
-        self.type = type
-        self.gender = gender
-        self.origin = origin
-        self.location = location
-        self.image = image
-        self.episode = episode
-        self.url = url
-        self.created = created
+        id = model.id
+        name = model.name
+        status = CharacterStatus(rawValue: model.status) ?? .none
+        species = model.species
+        type = model.type
+        gender = CharacterGender(rawValue: model.gender) ?? .none
+        origin = model.origin
+        location = model.location
+        image = model.image
+        episode = model.episode
+        url = model.url
+        created = model.created
     }
     
     func getStatusPathForImage() -> String {
