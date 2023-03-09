@@ -5,6 +5,8 @@
 //  Created by Anton Ivanov on 04.03.2023.
 //
 
+import UIKit
+
 struct CharacterEntity {
     
     let id: Int
@@ -26,6 +28,8 @@ struct CharacterEntity {
     
 	// FIXME: переименовать на imageURL?
     let image: String
+    
+    var uiimage: UIImage?
     
 	// FIXME: Или перемеиновать?
 	/// Соддержит ссылки на эпизоды, в которых встречался персонаж

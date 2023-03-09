@@ -36,7 +36,7 @@ class URLRequestBuilder {
     func set(method: HTTPMethod) -> Self {
         
         self.method = method
-        // FIXME: Нужен отступ?
+        
         return self
     }
     

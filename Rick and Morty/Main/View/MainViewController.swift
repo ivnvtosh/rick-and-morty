@@ -11,17 +11,17 @@ final class MainViewController: UIViewController {
     
     var presenter: MainViewOutput?
     
-    var characters = [CharacterEntity]()
+    var items = [MainItemModel]()
     
     lazy var collectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
         
         layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 40, left: 0, bottom: 40, right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumLineSpacing = 40
         
-        let length = view.frame.width - 80
+        let length = view.frame.width - 120
         layout.itemSize = CGSize(width: length, height: length)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -65,23 +65,20 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
         
-        characters.count
+        items.count
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.identifier,
-                                                            for: indexPath) as? MainCollectionViewCell else {
-            
+        let model = items[indexPath.item].item
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: model.identifier,
+                                                            for: indexPath) as? MainBaseCollectionViewCell else {
             return UICollectionViewCell()
         }
         
-        let character = characters[indexPath.item]
-        
-        cell.show(character: character)
-		
-        presenter?.didDisplayCell(with: character.image, completion: cell.show)
+        cell.model = model
         
         return cell
     }
@@ -89,25 +86,29 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
         
-        presenter?.didSelectItemAt(character: characters[indexPath.item])
+        let cellAction = presenter as? MainCollectionViewDelegate
+        let index = indexPath.item
+        
+        cellAction?.didSelectItem(at: index)
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         willDisplay cell: UICollectionViewCell,
                         forItemAt indexPath: IndexPath) {
         
-        if indexPath.last == characters.count - 1 {
+        if indexPath.last == items.count - 1 {
             
-            presenter?.willDisplayCell()
+            let cellAction = presenter as? MainCollectionViewDelegate
+            cellAction?.willDisplayLastItem()
         }
     }
 }
 
 extension MainViewController: MainViewInput {
     
-    func show(_ characters: [CharacterEntity]) async {
+    func show(_ items: [MainItemModel]) async {
         
-        self.characters += characters
-        self.collectionView.reloadData()
+        self.items += items
+        collectionView.reloadData()
     }
 }

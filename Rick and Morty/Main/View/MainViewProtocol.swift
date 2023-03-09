@@ -5,10 +5,14 @@
 //  Created by Anton Ivanov on 27.02.2023.
 //
 
-import Foundation
+import UIKit
 
-protocol MainViewProtocol: AnyObject {
+protocol MainViewInput: AnyObject {
     
-    func showCharacters(_ characters: [CharacterEntity]) async
-    func showError(_ error: Error)
+    func show(_ items: [MainItemModel]) async
+}
+
+protocol MainViewOutput: AnyObject {
+    
+    func viewDidLoad()
 }

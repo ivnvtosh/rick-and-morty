@@ -28,8 +28,7 @@ extension MainRouter: MainRouterProtocol {
         viewController?.present(characterViewController, animated: true)
     }
     
-	// FIXME: rename loadCharaters
-	func show(_ error: Error, and loadCharaters: @escaping () -> Void) {
+	func show(_ error: Error, and loadCharaters: @escaping () -> ()) {
         
         let alertController = UIAlertController(title: "Error",
                                                 message: error.localizedDescription,
@@ -39,6 +38,27 @@ extension MainRouter: MainRouterProtocol {
                                         style: .default,
                                         handler: { _ in
 			loadCharaters()
+        })
+        
+        alertController.addAction(alertAction)
+        
+        Task {
+            
+            await viewController?.present(alertController, animated: true)
+        }
+    }
+    
+    func show(_ error: Error) {
+        
+        let alertController = UIAlertController(title: "Error",
+                                                message: error.localizedDescription,
+                                                preferredStyle: .alert)
+        
+        let alertAction = UIAlertAction(title: "OK",
+                                        style: .default,
+                                        handler: { _ in
+            
+            alertController.dismiss(animated: true)
         })
         
         alertController.addAction(alertAction)

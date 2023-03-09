@@ -7,14 +7,25 @@
 
 import UIKit
 
-final class MainModuleBuilder { }
+final class MainModuleBuilder {
+    
+    private let imageService: ImageServiceProtocol
+    private let rickAndMortyService: RickAndMortyServiceProtocol
+    
+    init(imageService: ImageServiceProtocol,
+         rickAndMortyService: RickAndMortyServiceProtocol) {
+        
+        self.imageService = imageService
+        self.rickAndMortyService = rickAndMortyService
+    }
+}
 
 extension MainModuleBuilder: MainModuleBuilderProtocol {
 	
 	func build() -> MainViewController {
 		
 		let viewController = MainViewController()
-		let interactor = MainInteractor()
+        let interactor = MainInteractor(imageService: imageService, rickAndMortyService: rickAndMortyService)
 		let router = MainRouter(view: viewController)
 		let presenter = MainPresenter(view: viewController,
 									  interactor: interactor,

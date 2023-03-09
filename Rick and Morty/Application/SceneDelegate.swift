@@ -24,7 +24,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let tabBarController = UITabBarController()
         
-		let mainBuilder: MainModuleBuilderProtocol = MainModuleBuilder()
+        let imageService = ImageService()
+        let rickAndMortyService = RickAndMortyService()
+		let mainBuilder: MainModuleBuilderProtocol = MainModuleBuilder(imageService: imageService,
+                                                                       rickAndMortyService: rickAndMortyService)
 		
         let episodeViewController = EpisodeModuleBuilder.build()
         let mainViewController = mainBuilder.build()

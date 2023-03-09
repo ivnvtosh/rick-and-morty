@@ -82,7 +82,7 @@ class RickAndMortyService {
     }
 }
 
-extension RickAndMortyService: RickAndMortyProtocol {
+extension RickAndMortyService: RickAndMortyServiceProtocol {
 	
 	// MARK: - Characters
 	

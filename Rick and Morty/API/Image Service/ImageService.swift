@@ -9,8 +9,10 @@ import UIKit
 
 /// Сервис выполянет сетевой запрос для загрузки и кэширования изображения.
 /// В случае если изображение уже присутсвует в кэше, то загрузка выпоняться не будет.
-class ImageService {
+class ImageService { }
 
+extension ImageService: ImageServiceProtocol {
+    
     /// Метод загружает и кэширует изображение.
     /// - Parameters:
     ///     - with imageURL String: Cсылка на изображение.
@@ -22,8 +24,8 @@ class ImageService {
             throw ImageError.invalidURL
         }
         
-		let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)
-		
+        let request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)
+        
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let response = response as? HTTPURLResponse else {

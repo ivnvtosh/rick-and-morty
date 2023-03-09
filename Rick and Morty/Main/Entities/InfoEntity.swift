@@ -2,7 +2,7 @@
 //  InfoEntity.swift
 //  Rick and Morty
 //
-//  Created by Иванов Антон Александрович on 07.03.2023.
+//  Created by Anton Ivanov0 on 07.03.2023.
 //
 
 struct InfoEntity {

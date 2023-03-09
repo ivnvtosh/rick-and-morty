@@ -21,6 +21,102 @@ final class MainPresenter {
         self.interactor = interactor
         self.router = router
     }
+    
+    private func loadCharacters() {
+        
+        Task { @MainActor in
+
+            do {
+
+                let characters = try await interactor.loadCharacter()
+                
+                let items = characters.map() { MainItemModel($0) }
+                
+                await view?.show(items)
+            }
+
+            catch {
+
+                router.show(error, and: loadCharacters)
+            }
+        }
+    }
+
+    private func loadNextCharacters() {
+
+        Task { @MainActor in
+
+            do {
+
+                let characters = try await interactor.loadNextCharacters()
+
+                let charactersWithImage = characters.map() { character in
+                    
+                    var character = character
+                    
+                    Task { @MainActor in
+                        character.uiimage = await loadImage(from: character.image)
+                    }
+                    return character
+                }
+                
+                let items = charactersWithImage.map() { MainItemModel($0) }
+                
+                await view?.show(items)
+            }
+
+            catch {
+
+                router.show(error)
+            }
+        }
+    }
+    
+    private func loadImage(from url: String) async -> UIImage {
+        
+        do {
+
+            return try await interactor.loadImage(with: url)
+        }
+        
+        catch {
+            
+            print(error.localizedDescription)
+            
+            let systemName = "externaldrive.trianglebadge.exclamationmark"
+            let image = UIImage(systemName: systemName) ?? .remove
+            
+            return image
+        }
+    }
+}
+
+extension MainPresenter: MainCollectionViewDelegate {
+    
+    func didSelectItem(at index: Int) {
+        
+        guard let character = interactor.characterEntity?[index] else {
+            
+            return
+        }
+        
+        router.show(character)
+    }
+    
+    func willDisplayLastItem() {
+        
+        loadNextCharacters()
+    }
+    
+    func didDisplayItem(at index: Int) {
+
+//        guard let character = interactor.characterEntity?[index] else {
+//
+//            return
+//        }
+//
+//        loadImage(from: character.image)
+    }
 }
 
 extension MainPresenter: MainViewOutput {
@@ -28,71 +124,6 @@ extension MainPresenter: MainViewOutput {
     func viewDidLoad() {
         
 		loadCharacters()
-    }
-	
-	private func loadCharacters() {
-		
-		Task { @MainActor in
-			
-			do {
-				
-				let characters = try await interactor.loadCharacter()
-				
-				await view?.show(characters)
-			}
-			
-			catch {
-				
-				router.show(error, and: loadCharacters)
-			}
-		}
-	}
-    
-	// FIXME: Событие
-    func didDisplayCell(with url: String, completion: @escaping ((UIImage) async -> Void)) {
-        
-        Task { @MainActor in
-            
-            do {
-                
-                let image = try await interactor.loadImage(with: url)
-                
-                await completion(image)
-            }
-            
-            catch {
-                
-                print(error.localizedDescription)
-                
-				let systemName = "externaldrive.trianglebadge.exclamationmark"
-				let image = UIImage(systemName: systemName) ?? .remove
-				
-				await completion(image)
-            }
-        }
-    }
-    
-    func didSelectItemAt(character: CharacterEntity) {
-        
-        router.show(character)
-    }
-    
-    func willDisplayCell() {
-        
-        Task { @MainActor in
-            
-            do {
-                
-                let characters = try await interactor.loadCharacterNext()
-                
-                await self.view?.show(characters)
-            }
-            
-            catch {
-                
-                router.show(error, and: willDisplayCell)
-            }
-        }
     }
 }
 
