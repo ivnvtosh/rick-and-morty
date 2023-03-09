@@ -18,7 +18,7 @@ protocol MainViewOutput: AnyObject {
     
     func didDisplayCell(with url: String, completion: @escaping ((UIImage) async -> Void))
         
-    func didSelectItemAt(character: CharacterEntity, originFrame: CGRect)
+    func didSelectItemAt(character: CharacterEntity)
     
     func willDisplayCell()
 }

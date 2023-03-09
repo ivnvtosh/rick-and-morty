@@ -89,16 +89,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
         
-        // FIXME: Если не сработает, то что делать?
-        guard let selectedCell = collectionView.cellForItem(at: indexPath) as? MainCollectionViewCell,
-              let selectedCellSuperview = selectedCell.superview else {
-
-            return
-        }
-        
-        let originFrame = selectedCellSuperview.convert(selectedCell.frame, to: nil)
-        
-        presenter?.didSelectItemAt(character: characters[indexPath.item], originFrame: originFrame)
+        presenter?.didSelectItemAt(character: characters[indexPath.item])
     }
     
     func collectionView(_ collectionView: UICollectionView,

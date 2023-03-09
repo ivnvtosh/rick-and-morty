@@ -10,9 +10,6 @@ import UIKit
 final class MainRouter {
     
     weak var viewController: UIViewController?
-
-    // FIXME: Убрать
-	let transitioningDelegate = TransitioningDelegate()
 	
 	init(view: UIViewController) {
 		
@@ -22,32 +19,29 @@ final class MainRouter {
 
 extension MainRouter: MainRouterProtocol {
 
-    func show(_ character: CharacterEntity, originFrame: CGRect) {
+    func show(_ character: CharacterEntity) {
         
         let characterViewController = CharacterModuleBuilder.build(with: character)
 
-        transitioningDelegate.presentationAnimation = CharacterAnimator(originFrame: originFrame, isPresented: true)
-        transitioningDelegate.dismissalAnimation = CharacterAnimator(originFrame: originFrame, isPresented: false)
-        characterViewController.transitioningDelegate = transitioningDelegate
         characterViewController.modalPresentationStyle = .fullScreen
 
         viewController?.present(characterViewController, animated: true)
     }
     
-    // FIXME: handler
-    func show(_ error: Error) {
+	// FIXME: rename loadCharaters
+	func show(_ error: Error, and loadCharaters: @escaping () -> Void) {
         
         let alertController = UIAlertController(title: "Error",
                                                 message: error.localizedDescription,
                                                 preferredStyle: .alert)
         
-//        let alertAction = UIAlertAction(title: "Try again",
-//                                        style: .default,
-//                                        handler: { [weak viewController]  _ in
-//            viewController?.presenter?.viewDidLoad()
-//        })
-//        
-//        alertController.addAction(alertAction)
+        let alertAction = UIAlertAction(title: "Try again",
+                                        style: .default,
+                                        handler: { _ in
+			loadCharaters()
+        })
+        
+        alertController.addAction(alertAction)
         
         Task {
             

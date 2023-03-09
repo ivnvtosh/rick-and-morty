@@ -9,6 +9,6 @@ import Foundation
 
 protocol MainRouterProtocol {
     
-    func show(_ character: CharacterEntity, originFrame: CGRect)
-    func show(_ error: Error)
+    func show(_ character: CharacterEntity)
+	func show(_ error: Error, and loadCharaters: @escaping () -> Void)
 }

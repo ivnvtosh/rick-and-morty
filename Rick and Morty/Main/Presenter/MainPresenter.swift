@@ -24,24 +24,29 @@ final class MainPresenter {
 }
 
 extension MainPresenter: MainViewOutput {
-    
+    	
     func viewDidLoad() {
         
-        Task { @MainActor in
-            
-            do {
-                
-                let characters = try await interactor.loadCharacter()
-                
-                await self.view?.show(characters)
-            }
-            
-            catch {
-                
-                router.show(error)
-            }
-        }
+		loadCharacters()
     }
+	
+	private func loadCharacters() {
+		
+		Task { @MainActor in
+			
+			do {
+				
+				let characters = try await interactor.loadCharacter()
+				
+				await view?.show(characters)
+			}
+			
+			catch {
+				
+				router.show(error, and: loadCharacters)
+			}
+		}
+	}
     
 	// FIXME: Событие
     func didDisplayCell(with url: String, completion: @escaping ((UIImage) async -> Void)) {
@@ -67,9 +72,9 @@ extension MainPresenter: MainViewOutput {
         }
     }
     
-    func didSelectItemAt(character: CharacterEntity, originFrame: CGRect) {
+    func didSelectItemAt(character: CharacterEntity) {
         
-        router.show(character, originFrame: originFrame)
+        router.show(character)
     }
     
     func willDisplayCell() {
@@ -85,7 +90,7 @@ extension MainPresenter: MainViewOutput {
             
             catch {
                 
-                router.show(error)
+                router.show(error, and: willDisplayCell)
             }
         }
     }

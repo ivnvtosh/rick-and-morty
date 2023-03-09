@@ -11,8 +11,6 @@ final class MainCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "CollectionViewCell"
     
-    var imageIdentifier = ""
-    
     lazy var imageView: UIImageView = {
         
         let imageView = UIImageView()
@@ -131,8 +129,6 @@ final class MainCollectionViewCell: UICollectionViewCell {
         
         activityIndicatorView.isHidden = false
         activityIndicatorView.startAnimating()
-        
-        imageIdentifier = ""
     }
     
     public func show(character: CharacterEntity) {
@@ -140,10 +136,7 @@ final class MainCollectionViewCell: UICollectionViewCell {
         nameLabel.text = character.name
         
         descriptionLabel.text = character.status.rawValue + " - " + character.species
-        
-        let imageURL = character.image
-        imageIdentifier = imageURL
-                
+		
         let nameColor = character.getStatusPathForImage()
         statusImageView.tintColor = UIColor(named: nameColor)
     }
